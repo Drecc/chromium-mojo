@@ -493,35 +493,11 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/googletest.git' + '@' + Var('googletest_revision'),
   'src/third_party/sqlite/src':
     Var('chromium_git') + '/chromium/deps/sqlite.git' + '@' + 'a54d5d154f4b349705a67107ed190d1943f94646',  
+  'src/third_party/depot_tools':
+    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' + '932a621ece2316026926d615bb04d3006077ab79',
 }
 
 hooks = [
-  # Download and initialize "vpython" VirtualEnv environment packages for
-  # Python2. We do this before running any other hooks so that any other
-  # hooks that might use vpython don't trip over unexpected issues and
-  # don't run slower than they might otherwise need to.
-  {
-    'name': 'vpython_common',
-    'pattern': '.',
-    # TODO(https://crbug.com/1205263): Run this on mac/arm too once it works.
-    'condition': 'not (host_os == "mac" and host_cpu == "arm64")',
-    'action': [ 'vpython',
-                '-vpython-spec', 'src/.vpython',
-                '-vpython-tool', 'install',
-    ],
-  },
-  # Download and initialize "vpython" VirtualEnv environment packages for
-  # Python3. We do this before running any other hooks so that any other
-  # hooks that might use vpython don't trip over unexpected issues and
-  # don't run slower than they might otherwise need to.
-  {
-    'name': 'vpython3_common',
-    'pattern': '.',
-    'action': [ 'vpython3',
-                '-vpython-spec', 'src/.vpython3',
-                '-vpython-tool', 'install',
-    ],
-  },
   {
     # This clobbers when necessary (based on get_landmines.py). This should
     # run as early as possible so that other things that get/generate into the
@@ -598,7 +574,16 @@ hooks = [
                 '-o', 'src/tools/clang/dsymutil/bin/dsymutil',
     ],
   },
-
+  # Don't let the DEPS'd-in depot_tools self-update.
+  {
+    'name': 'disable_depot_tools_selfupdate',
+    'pattern': '.',
+    'action': [
+      'python3',
+      'src/third_party/depot_tools/update_depot_tools_toggle.py',
+      '--disable',
+    ],
+  },
   # Pull clang-format binaries using checked-in hashes.
   {
     'name': 'clang_format_win',
