@@ -1,0 +1,6 @@
+group("gn_all") {
+  deps = [
+    "//base:base",
+    # "//mojo:mojo",
+  ]
+}
