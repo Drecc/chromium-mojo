@@ -267,14 +267,14 @@ source_set("struct_traits") {
 if (!is_ios) {
   component("wtf_support") {
     sources = [
-      "array_traits_web_vector.h",
-      "array_traits_wtf_vector.h",
-      "lib/string_traits_wtf.cc",
-      "lib/wtf_clone_equals_util.h",
-      "lib/wtf_hash_util.h",
-      "lib/wtf_serialization.h",
-      "map_traits_wtf_hash_map.h",
-      "string_traits_wtf.h",
+      # "array_traits_web_vector.h",
+      # "array_traits_wtf_vector.h",
+      # "lib/string_traits_wtf.cc",
+      # "lib/wtf_clone_equals_util.h",
+      # "lib/wtf_hash_util.h",
+      # "lib/wtf_serialization.h",
+      # "map_traits_wtf_hash_map.h",
+      # "string_traits_wtf.h",
     ]
 
     defines = [ "IS_MOJO_CPP_BINDINGS_BASE_IMPL" ]
@@ -282,9 +282,9 @@ if (!is_ios) {
     public_deps = [
       ":bindings",
       "//base",
-      "//third_party/blink/public:blink_headers",
-      "//third_party/blink/renderer/platform:platform_export",
-      "//third_party/blink/renderer/platform/wtf",
+      # "//third_party/blink/public:blink_headers",
+      # "//third_party/blink/renderer/platform:platform_export",
+      # "//third_party/blink/renderer/platform/wtf",
     ]
   }
 }

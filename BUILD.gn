@@ -1,6 +1,7 @@
 group("gn_all") {
+  testonly = true
   deps = [
     "//base:base",
-    # "//mojo:mojo",
+    "//mojo:mojo",
   ]
 }

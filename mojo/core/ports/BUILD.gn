@@ -38,9 +38,9 @@ component("ports") {
 
   public_deps = [ "//base" ]
 
-  if (!is_nacl) {
-    deps = [ "//crypto" ]
-  }
+  # if (!is_nacl) {
+  #   deps = [ "//crypto" ]
+  # }
 
   if (!is_debug && !optimize_for_size) {
     configs -= [ "//build/config/compiler:default_optimization" ]

@@ -25,11 +25,11 @@
 #include "mojo/core/ports/port_locker.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
-#if !BUILDFLAG(IS_NACL)
-#include "crypto/random.h"
-#else
+// #if !BUILDFLAG(IS_NACL)
+// #include "crypto/random.h"
+// #else
 #include "base/rand_util.h"
-#endif
+// #endif
 
 namespace mojo {
 namespace core {
@@ -58,11 +58,11 @@ class RandomNameGenerator {
   PortName GenerateRandomPortName() {
     base::AutoLock lock(lock_);
     if (cache_index_ == kRandomNameCacheSize) {
-#if BUILDFLAG(IS_NACL)
+// #if BUILDFLAG(IS_NACL)
       base::RandBytes(cache_, sizeof(PortName) * kRandomNameCacheSize);
-#else
-      crypto::RandBytes(cache_, sizeof(PortName) * kRandomNameCacheSize);
-#endif
+// #else
+//       crypto::RandBytes(cache_, sizeof(PortName) * kRandomNameCacheSize);
+// #endif
       cache_index_ = 0;
     }
     return cache_[cache_index_++];

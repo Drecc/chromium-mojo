@@ -18,7 +18,7 @@ group("mojo") {
     deps += [ "//mojo/public/java/system" ]
   }
 
-  deps += [ "//services/service_manager:all" ]
+  # deps += [ "//services/service_manager:all" ]
 }
 
 group("tests") {
@@ -26,9 +26,9 @@ group("tests") {
   deps = [
     ":mojo_perftests",
     ":mojo_unittests",
-    "//ipc:ipc_tests",
-    "//mojo/public/tools:mojo_python_unittests",
-    "//services/service_manager/tests",
+    # "//ipc:ipc_tests",
+    # "//mojo/public/tools:mojo_python_unittests",
+    # "//services/service_manager/tests",
     "//third_party/ipcz/src:ipcz_tests",
   ]
 }

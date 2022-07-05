@@ -5,8 +5,8 @@
 import("//third_party/closure_compiler/closure_args.gni")
 import("//third_party/closure_compiler/compile_js.gni")
 import("//third_party/protobuf/proto_library.gni")
-import("//ui/webui/resources/tools/generate_grd.gni")
-import("//ui/webui/webui_features.gni")
+# import("//ui/webui/resources/tools/generate_grd.gni")
+# import("//ui/webui/webui_features.gni")
 
 # TODO(rockot): Maybe we can factor these dependencies out of //mojo. They're
 # used to conditionally enable message ID scrambling in a way which is
@@ -18,7 +18,7 @@ import("//build/config/chromecast_build.gni")
 import("//build/config/chromeos/ui_mode.gni")
 import("//build/config/nacl/config.gni")
 import("//build/toolchain/kythe.gni")
-import("//components/nacl/features.gni")
+# import("//components/nacl/features.gni")
 import("//third_party/jinja2/jinja2.gni")
 import("//tools/ipc_fuzzer/ipc_fuzzer.gni")
 declare_args() {
@@ -36,7 +36,7 @@ declare_args() {
   # scrambled (i.e. randomized based on the contents of //chrome/VERSION) on
   # non-Chrome OS desktop platforms. Set to |false| to disable message ID
   # scrambling on all platforms.
-  enable_mojom_message_id_scrambling = true
+  enable_mojom_message_id_scrambling = false
 
   # Enables Closure compilation of generated JS lite bindings. In environments
   # where compilation is supported, any mojom target "foo" will also have a
@@ -1067,7 +1067,7 @@ template("mojom") {
     blink_variant = {
       variant = "blink"
       component_macro_suffix = "_BLINK"
-      for_blink = true
+      for_blink = false
     }
     enabled_configurations = [
       default_variant,
