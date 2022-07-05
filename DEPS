@@ -499,6 +499,9 @@ deps = {
     'url': Var('chromium_git') + '/chromium/deps/nasm.git' + '@' +
     '9215e8e1d0fe474ffd3e16c1a07a0f97089e6224'
   },
+  'src/third_party/jsoncpp/source':
+    Var('chromium_git') + '/external/github.com/open-source-parsers/jsoncpp.git'
+      + '@' + '9059f5cad030ba11d37818847443a53918c327b1', # release 1.9.4
 }
 
 hooks = [
