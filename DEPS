@@ -495,6 +495,10 @@ deps = {
     Var('chromium_git') + '/chromium/deps/sqlite.git' + '@' + 'a54d5d154f4b349705a67107ed190d1943f94646',  
   'src/third_party/depot_tools':
     Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' + '932a621ece2316026926d615bb04d3006077ab79',
+  'src/third_party/nasm': {
+    'url': Var('chromium_git') + '/chromium/deps/nasm.git' + '@' +
+    '9215e8e1d0fe474ffd3e16c1a07a0f97089e6224'
+  },
 }
 
 hooks = [
