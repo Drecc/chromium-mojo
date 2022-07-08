@@ -39,7 +39,11 @@ inline uint32_t ByteSwap(uint32_t x) {
 #endif
 }
 
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+inline uint64_t ByteSwap(uint64_t x) {
+#else
 inline constexpr uint64_t ByteSwap(uint64_t x) {
+#endif
   // Per build/build_config.h, clang masquerades as MSVC on Windows. If we are
   // actually using clang, we can rely on the builtin.
   //
@@ -54,7 +58,11 @@ inline constexpr uint64_t ByteSwap(uint64_t x) {
 #endif
 }
 
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+inline uintptr_t ByteSwapUintPtrT(uintptr_t x) {
+#else
 inline constexpr uintptr_t ByteSwapUintPtrT(uintptr_t x) {
+#endif
   // We do it this way because some build configurations are ILP32 even when
   // defined(ARCH_CPU_64_BITS). Unfortunately, we can't use sizeof in #ifs. But,
   // because these conditionals are constexprs, the irrelevant branches will

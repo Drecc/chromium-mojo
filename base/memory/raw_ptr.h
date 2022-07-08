@@ -856,6 +856,12 @@ class TRIVIAL_ABI GSL_POINTER raw_ptr {
     return *this += -delta_elems;
   }
 
+#if defined(OS_WIN) && !defined(__clang__)
+  ALWAYS_INLINE T* operator+(size_t delta_elems) const {
+    return Impl::Advance(wrapped_ptr_, delta_elems);
+  }
+#endif
+
   // Stop referencing the underlying pointer and free its memory. Compared to
   // raw delete calls, this avoids the raw_ptr to be temporarily dangling
   // during the free operation, which will lead to taking the slower path that

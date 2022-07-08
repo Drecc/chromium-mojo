@@ -1366,20 +1366,21 @@ DEFINE_TEST_CLIENT_TEST_WITH_PIPE(BadMessageClient,
   EXPECT_EQ("bye", ReadMessage(parent));
 }
 
+#if !BUILDFLAG(IS_FUCHSIA)
+
 INSTANTIATE_TEST_SUITE_P(
     All,
     MultiprocessMessagePipeTestWithPeerSupport,
     testing::Values(test::MojoTestBase::LaunchType::CHILD,
                     test::MojoTestBase::LaunchType::CHILD_WITHOUT_CAPABILITIES,
                     test::MojoTestBase::LaunchType::PEER,
-                    test::MojoTestBase::LaunchType::ASYNC
-#if !BUILDFLAG(IS_FUCHSIA)
-                    // Fuchsia has no named pipe support.
-                    ,
+                    test::MojoTestBase::LaunchType::ASYNC,
                     test::MojoTestBase::LaunchType::NAMED_CHILD,
                     test::MojoTestBase::LaunchType::NAMED_PEER
-#endif  // !BUILDFLAG(IS_FUCHSIA)
                     ));
+
+#endif  // !BUILDFLAG(IS_FUCHSIA)
+
 }  // namespace
 }  // namespace core
 }  // namespace mojo

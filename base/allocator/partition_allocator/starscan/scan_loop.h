@@ -25,8 +25,12 @@
 // vectorized instructions.
 #include <immintrin.h>
 #include <smmintrin.h>
+
+#if !defined(COMPILER_MSVC) || defined(__clang__)
 #include <avxintrin.h>
 #include <avx2intrin.h>
+#endif
+
 // clang-format on
 #endif
 
@@ -58,10 +62,16 @@ class ScanLoop {
   const Derived& derived() const { return static_cast<const Derived&>(*this); }
   Derived& derived() { return static_cast<Derived&>(*this); }
 
-#if defined(ARCH_CPU_X86_64)
+#if defined(ARCH_CPU_X86_64) 
+#if (!defined(COMPILER_MSVC) || defined(__clang__))
   __attribute__((target("avx2"))) void RunAVX2(uintptr_t, uintptr_t);
   __attribute__((target("sse4.1"))) void RunSSE4(uintptr_t, uintptr_t);
+#else
+  void RunAVX2(uintptr_t, uintptr_t);
+  void RunSSE4(uintptr_t, uintptr_t);
 #endif
+#endif
+
 #if defined(PA_STARSCAN_NEON_SUPPORTED)
   void RunNEON(uintptr_t, uintptr_t);
 #endif
@@ -115,8 +125,13 @@ void ScanLoop<Derived>::RunUnvectorized(uintptr_t begin, uintptr_t end) {
 
 #if defined(ARCH_CPU_X86_64)
 template <typename Derived>
+#if (!defined(COMPILER_MSVC) || defined(__clang__))
 __attribute__((target("avx2"))) void ScanLoop<Derived>::RunAVX2(uintptr_t begin,
                                                                 uintptr_t end) {
+#else
+void ScanLoop<Derived>::RunAVX2(uintptr_t begin, uintptr_t end) {
+#endif
+
   static constexpr size_t kAlignmentRequirement = 32;
   static constexpr size_t kWordsInVector = 4;
   static constexpr size_t kBytesInVector = kWordsInVector * sizeof(uintptr_t);
@@ -154,9 +169,15 @@ __attribute__((target("avx2"))) void ScanLoop<Derived>::RunAVX2(uintptr_t begin,
 }
 
 template <typename Derived>
+#if (!defined(COMPILER_MSVC) || defined(__clang__))
 __attribute__((target("sse4.1"))) void ScanLoop<Derived>::RunSSE4(
     uintptr_t begin,
     uintptr_t end) {
+#else
+void ScanLoop<Derived>::RunSSE4(
+    uintptr_t begin,
+    uintptr_t end) {
+#endif
   static constexpr size_t kAlignmentRequirement = 16;
   static constexpr size_t kWordsInVector = 2;
   static constexpr size_t kBytesInVector = kWordsInVector * sizeof(uintptr_t);

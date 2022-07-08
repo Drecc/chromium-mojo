@@ -118,7 +118,12 @@ using AllocationStateMap =
 //   found, an empty or decommitted slot spans (if one exists) will be pulled
 //   from the empty/decommitted list on to the active list.
 template <bool thread_safe>
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(push,1)
+struct SlotSpanMetadata {
+#else
 struct __attribute__((packed)) SlotSpanMetadata {
+#endif
  private:
   PartitionFreelistEntry* freelist_head = nullptr;
 
@@ -302,6 +307,11 @@ struct __attribute__((packed)) SlotSpanMetadata {
         empty_cache_index_(0),
         unused2_(0) {}
 };
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(pop)
+#endif
+
+
 static_assert(sizeof(SlotSpanMetadata<ThreadSafe>) <= kPageMetadataSize,
               "SlotSpanMetadata must fit into a Page Metadata slot.");
 
@@ -325,10 +335,20 @@ struct SubsequentPageMetadata {
 // more than 1 page, the page metadata may contain rudimentary additional
 // information.
 template <bool thread_safe>
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(push,1)
+struct PartitionPage {
+#else
 struct __attribute__((packed)) PartitionPage {
+#endif
   // "Pack" the union so that common page metadata still fits within
   // kPageMetadataSize. (SlotSpanMetadata is also "packed".)
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(push,1)
+  union {
+#else
   union __attribute__((packed)) {
+#endif
     SlotSpanMetadata<thread_safe> slot_span_metadata;
 
     SubsequentPageMetadata subsequent_page_metadata;
@@ -340,6 +360,9 @@ struct __attribute__((packed)) PartitionPage {
     // This makes sure that this is respected no matter the architecture.
     char optional_padding[kPageMetadataSize - sizeof(uint8_t) - sizeof(bool)];
   };
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(pop)
+#endif
 
   // The first PartitionPage of the slot span holds its metadata. This offset
   // tells how many pages in from that first page we are.
@@ -366,6 +389,10 @@ struct __attribute__((packed)) PartitionPage {
 
   ALWAYS_INLINE static PartitionPage* FromAddr(uintptr_t address);
 };
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(pop)
+#endif
+
 
 static_assert(sizeof(PartitionPage<ThreadSafe>) == kPageMetadataSize,
               "PartitionPage must be able to fit in a metadata slot");

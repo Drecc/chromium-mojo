@@ -37,9 +37,15 @@ class PartitionFreelistEntry;
 
 class EncodedPartitionFreelistEntryPtr {
  private:
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  explicit ALWAYS_INLINE EncodedPartitionFreelistEntryPtr(
+      std::nullptr_t)
+      : encoded_(Transform(0)) {}
+#else
   explicit ALWAYS_INLINE constexpr EncodedPartitionFreelistEntryPtr(
       std::nullptr_t)
       : encoded_(Transform(0)) {}
+#endif
   explicit ALWAYS_INLINE EncodedPartitionFreelistEntryPtr(void* ptr)
       : encoded_(Transform(reinterpret_cast<uintptr_t>(ptr))) {}
 
@@ -57,7 +63,11 @@ class EncodedPartitionFreelistEntryPtr {
 
   // Transform() works the same in both directions, so can be used for
   // encoding and decoding.
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  ALWAYS_INLINE static uintptr_t Transform(uintptr_t address) {
+#else
   ALWAYS_INLINE static constexpr uintptr_t Transform(uintptr_t address) {
+#endif
     // We use bswap on little endian as a fast transformation for two reasons:
     // 1) On 64 bit architectures, the pointer is very unlikely to be a
     //    canonical address. Therefore, if an object is freed and its vtable is
@@ -85,6 +95,16 @@ class EncodedPartitionFreelistEntryPtr {
 // the rationale and mechanism, respectively.
 class PartitionFreelistEntry {
  private:
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  explicit PartitionFreelistEntry(std::nullptr_t)
+      : encoded_next_(EncodedPartitionFreelistEntryPtr(nullptr))
+#if defined(PA_HAS_FREELIST_SHADOW_ENTRY)
+        ,
+        shadow_(encoded_next_.Inverted())
+#endif
+  {
+  }
+#else
   explicit constexpr PartitionFreelistEntry(std::nullptr_t)
       : encoded_next_(EncodedPartitionFreelistEntryPtr(nullptr))
 #if defined(PA_HAS_FREELIST_SHADOW_ENTRY)
@@ -93,6 +113,7 @@ class PartitionFreelistEntry {
 #endif
   {
   }
+#endif
   explicit PartitionFreelistEntry(PartitionFreelistEntry* next)
       : encoded_next_(EncodedPartitionFreelistEntryPtr(next))
 #if defined(PA_HAS_FREELIST_SHADOW_ENTRY)

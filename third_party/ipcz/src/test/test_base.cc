@@ -11,6 +11,7 @@
 namespace ipcz::test {
 
 TestBase::TestBase() {
+  ipcz.size = sizeof(ipcz);
   IpczGetAPI(&ipcz);
 }
 

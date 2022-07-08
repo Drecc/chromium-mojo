@@ -547,37 +547,37 @@ mixed_component("base") {
     "process/process_metrics.cc",
     "process/process_metrics.h",
     "process/process_metrics_iocounters.h",
-    "profiler/arm_cfi_table.cc",
-    "profiler/arm_cfi_table.h",
-    "profiler/frame.cc",
-    "profiler/frame.h",
-    "profiler/metadata_recorder.cc",
-    "profiler/metadata_recorder.h",
-    "profiler/module_cache.cc",
-    "profiler/module_cache.h",
-    "profiler/native_unwinder.h",
-    "profiler/profile_builder.h",
-    "profiler/register_context.h",
-    "profiler/sample_metadata.cc",
-    "profiler/sample_metadata.h",
-    "profiler/sampling_profiler_thread_token.cc",
-    "profiler/sampling_profiler_thread_token.h",
-    "profiler/stack_buffer.cc",
-    "profiler/stack_buffer.h",
-    "profiler/stack_copier.cc",
-    "profiler/stack_copier.h",
-    "profiler/stack_copier_suspend.cc",
-    "profiler/stack_copier_suspend.h",
-    "profiler/stack_sampler.cc",
-    "profiler/stack_sampler.h",
-    "profiler/stack_sampler_impl.cc",
-    "profiler/stack_sampler_impl.h",
-    "profiler/stack_sampling_profiler.cc",
-    "profiler/stack_sampling_profiler.h",
-    "profiler/suspendable_thread_delegate.h",
-    "profiler/thread_delegate.h",
-    "profiler/unwinder.cc",
-    "profiler/unwinder.h",
+    # "profiler/arm_cfi_table.cc",
+    # "profiler/arm_cfi_table.h",
+    # "profiler/frame.cc",
+    # "profiler/frame.h",
+    # "profiler/metadata_recorder.cc",
+    # "profiler/metadata_recorder.h",
+    # "profiler/module_cache.cc",
+    # "profiler/module_cache.h",
+    # "profiler/native_unwinder.h",
+    # "profiler/profile_builder.h",
+    # "profiler/register_context.h",
+    # "profiler/sample_metadata.cc",
+    # "profiler/sample_metadata.h",
+    # "profiler/sampling_profiler_thread_token.cc",
+    # "profiler/sampling_profiler_thread_token.h",
+    # "profiler/stack_buffer.cc",
+    # "profiler/stack_buffer.h",
+    # "profiler/stack_copier.cc",
+    # "profiler/stack_copier.h",
+    # "profiler/stack_copier_suspend.cc",
+    # "profiler/stack_copier_suspend.h",
+    # "profiler/stack_sampler.cc",
+    # "profiler/stack_sampler.h",
+    # "profiler/stack_sampler_impl.cc",
+    # "profiler/stack_sampler_impl.h",
+    # "profiler/stack_sampling_profiler.cc",
+    # "profiler/stack_sampling_profiler.h",
+    # "profiler/suspendable_thread_delegate.h",
+    # "profiler/thread_delegate.h",
+    # "profiler/unwinder.cc",
+    # "profiler/unwinder.h",
     "rand_util.cc",
     "rand_util.h",
     "rand_util_nacl.cc",
@@ -979,7 +979,7 @@ mixed_component("base") {
       "process/process_handle_posix.cc",
       "process/process_metrics_posix.cc",
       "process/process_posix.cc",
-      "profiler/module_cache_posix.cc",
+      # "profiler/module_cache_posix.cc",
       "rand_util_posix.cc",
       "strings/string_util_posix.h",
       "strings/sys_string_conversions_posix.cc",
@@ -1002,24 +1002,24 @@ mixed_component("base") {
       sources += [
         "cpu_affinity_posix.cc",
         "cpu_affinity_posix.h",
-        "profiler/stack_copier_signal.cc",
-        "profiler/stack_copier_signal.h",
-        "profiler/stack_sampler_posix.cc",
-        "profiler/thread_delegate_posix.cc",
-        "profiler/thread_delegate_posix.h",
+        # "profiler/stack_copier_signal.cc",
+        # "profiler/stack_copier_signal.h",
+        # "profiler/stack_sampler_posix.cc",
+        # "profiler/thread_delegate_posix.cc",
+        # "profiler/thread_delegate_posix.h",
       ]
     }
   }
 
   if (is_win) {
     sources += [
-      "debug/close_handle_hook_win.cc",
-      "debug/close_handle_hook_win.h",
+      # "debug/close_handle_hook_win.cc",
+      # "debug/close_handle_hook_win.h",
       "debug/debugger_win.cc",
       "debug/gdi_debug_util_win.cc",
       "debug/gdi_debug_util_win.h",
-      "debug/invalid_access_win.cc",
-      "debug/invalid_access_win.h",
+      # "debug/invalid_access_win.cc",
+      # "debug/invalid_access_win.h",
       "debug/stack_trace_win.cc",
       "enterprise_util_win.cc",
       "file_version_info_win.cc",
@@ -1042,12 +1042,12 @@ mixed_component("base") {
       "process/process_iterator_win.cc",
       "process/process_metrics_win.cc",
       "process/process_win.cc",
-      "profiler/module_cache_win.cc",
-      "profiler/native_unwinder_win.cc",
-      "profiler/native_unwinder_win.h",
-      "profiler/stack_sampler_win.cc",
-      "profiler/suspendable_thread_delegate_win.cc",
-      "profiler/suspendable_thread_delegate_win.h",
+      # "profiler/module_cache_win.cc",
+      # "profiler/native_unwinder_win.cc",
+      # "profiler/native_unwinder_win.h",
+      # "profiler/stack_sampler_win.cc",
+      # "profiler/suspendable_thread_delegate_win.cc",
+      # "profiler/suspendable_thread_delegate_win.h",
       "scoped_clear_last_error_win.cc",
       "strings/strcat_win.cc",
       "strings/strcat_win.h",
@@ -1263,12 +1263,12 @@ mixed_component("base") {
       "process/process_iterator_mac.cc",
       "process/process_mac.cc",
       "process/process_metrics_mac.cc",
-      "profiler/module_cache_mac.cc",
-      "profiler/native_unwinder_apple.cc",
-      "profiler/native_unwinder_apple.h",
-      "profiler/stack_sampler_mac.cc",
-      "profiler/suspendable_thread_delegate_mac.cc",
-      "profiler/suspendable_thread_delegate_mac.h",
+      # "profiler/module_cache_mac.cc",
+      # "profiler/native_unwinder_apple.cc",
+      # "profiler/native_unwinder_apple.h",
+      # "profiler/stack_sampler_mac.cc",
+      # "profiler/suspendable_thread_delegate_mac.cc",
+      # "profiler/suspendable_thread_delegate_mac.h",
       "strings/sys_string_conversions_mac.mm",
       "synchronization/waitable_event_mac.cc",
       "synchronization/waitable_event_watcher_mac.cc",
@@ -1294,8 +1294,8 @@ mixed_component("base") {
       "native_library_ios.mm",
       "process/launch_ios.cc",
       "process/process_metrics_ios.cc",
-      "profiler/module_cache_mac.cc",
-      "profiler/stack_sampler_ios.cc",
+      # "profiler/module_cache_mac.cc",
+      # "profiler/stack_sampler_ios.cc",
     ]
     if (is_cronet_build) {
       sources += [
@@ -1311,10 +1311,10 @@ mixed_component("base") {
 
     if (ios_stack_profiler_enabled) {
       sources += [
-        "profiler/native_unwinder_apple.cc",
-        "profiler/native_unwinder_apple.h",
-        "profiler/suspendable_thread_delegate_mac.cc",
-        "profiler/suspendable_thread_delegate_mac.h",
+        # "profiler/native_unwinder_apple.cc",
+        # "profiler/native_unwinder_apple.h",
+        # "profiler/suspendable_thread_delegate_mac.cc",
+        # "profiler/suspendable_thread_delegate_mac.h",
       ]
     }
   }
@@ -1329,7 +1329,7 @@ mixed_component("base") {
       "os_compat_android.cc",
       "os_compat_android.h",
       "process/process_android.cc",
-      "profiler/stack_sampler_android.cc",
+      # "profiler/stack_sampler_android.cc",
       "threading/platform_thread_android.cc",
     ]
   }
@@ -1582,7 +1582,7 @@ mixed_component("base") {
   if (is_android) {
     sources -= [
       "debug/stack_trace_posix.cc",
-      "profiler/stack_sampler_posix.cc",
+      # "profiler/stack_sampler_posix.cc",
     ]
     sources += [
       "android/android_hardware_buffer_compat.cc",
@@ -1724,12 +1724,12 @@ mixed_component("base") {
     }
     if (current_cpu == "arm") {
       sources += [
-        "profiler/chrome_unwind_info_android.cc",
-        "profiler/chrome_unwind_info_android.h",
-        "profiler/chrome_unwinder_android.cc",
-        "profiler/chrome_unwinder_android.h",
-        "profiler/chrome_unwinder_android_v2.cc",
-        "profiler/chrome_unwinder_android_v2.h",
+        # "profiler/chrome_unwind_info_android.cc",
+        # "profiler/chrome_unwind_info_android.h",
+        # "profiler/chrome_unwinder_android.cc",
+        # "profiler/chrome_unwinder_android.h",
+        # "profiler/chrome_unwinder_android_v2.cc",
+        # "profiler/chrome_unwinder_android_v2.h",
       ]
     }
 
@@ -1825,8 +1825,8 @@ mixed_component("base") {
       "process/process_iterator_fuchsia.cc",
       "process/process_metrics_fuchsia.cc",
       "process/process_metrics_posix.cc",
-      "profiler/module_cache_posix.cc",
-      "profiler/stack_sampler_posix.cc",
+      # "profiler/module_cache_posix.cc",
+      # "profiler/stack_sampler_posix.cc",
       "rand_util_fuchsia.cc",
       "strings/string_util_posix.h",
       "strings/sys_string_conversions_posix.cc",
@@ -1920,7 +1920,7 @@ mixed_component("base") {
       "files/file_path_watcher_stub.cc",
       "memory/page_size_nacl.cc",
       "process/process_stubs.cc",
-      "profiler/stack_sampler_posix.cc",
+      # "profiler/stack_sampler_posix.cc",
       "sync_socket_nacl.cc",
       "threading/platform_thread_linux.cc",
     ]
@@ -1974,7 +1974,7 @@ mixed_component("base") {
       "process/process_metrics.cc",
       "process/process_metrics_posix.cc",
       "process/process_posix.cc",
-      "profiler/module_cache_posix.cc",
+      # "profiler/module_cache_posix.cc",
       "rand_util_posix.cc",
       "scoped_native_library.cc",
       "sync_socket_posix.cc",
@@ -2020,8 +2020,8 @@ mixed_component("base") {
       "power_monitor/power_monitor_device_source_win.cc",
       "power_monitor/speed_limit_observer_win.cc",
       "power_monitor/speed_limit_observer_win.h",
-      "profiler/win32_stack_frame_unwinder.cc",
-      "profiler/win32_stack_frame_unwinder.h",
+      # "profiler/win32_stack_frame_unwinder.cc",
+      # "profiler/win32_stack_frame_unwinder.h",
       "rand_util_win.cc",
       "system/sys_info_win.cc",
       "time/time_win.cc",
@@ -2102,7 +2102,7 @@ mixed_component("base") {
   if (is_apple) {
     sources -= [
       "native_library_posix.cc",
-      "profiler/module_cache_posix.cc",
+      # "profiler/module_cache_posix.cc",
       "strings/sys_string_conversions_posix.cc",
       "synchronization/waitable_event_posix.cc",
       "synchronization/waitable_event_watcher_posix.cc",
@@ -2631,8 +2631,8 @@ component("i18n") {
     "i18n/char_iterator.h",
     "i18n/character_encoding.cc",
     "i18n/character_encoding.h",
-    "i18n/encoding_detection.cc",
-    "i18n/encoding_detection.h",
+    # "i18n/encoding_detection.cc",
+    # "i18n/encoding_detection.h",
     "i18n/file_util_icu.cc",
     "i18n/file_util_icu.h",
     "i18n/i18n_constants.cc",
@@ -2664,7 +2664,7 @@ component("i18n") {
   defines = [ "BASE_I18N_IMPLEMENTATION" ]
   configs += [ "//build/config/compiler:wexit_time_destructors" ]
   public_deps = [
-    "//third_party/ced",
+    # "//third_party/ced",
     "//third_party/icu",
   ]
   deps = [
@@ -3135,14 +3135,14 @@ test("base_unittests") {
     "process/process_metrics_unittest.cc",
     "process/process_unittest.cc",
     "process/process_util_unittest.cc",
-    "profiler/arm_cfi_table_unittest.cc",
-    "profiler/metadata_recorder_unittest.cc",
-    "profiler/module_cache_unittest.cc",
-    "profiler/sample_metadata_unittest.cc",
-    "profiler/stack_copier_suspend_unittest.cc",
-    "profiler/stack_copier_unittest.cc",
-    "profiler/stack_sampler_impl_unittest.cc",
-    "profiler/stack_sampling_profiler_unittest.cc",
+    # "profiler/arm_cfi_table_unittest.cc",
+    # "profiler/metadata_recorder_unittest.cc",
+    # "profiler/module_cache_unittest.cc",
+    # "profiler/sample_metadata_unittest.cc",
+    # "profiler/stack_copier_suspend_unittest.cc",
+    # "profiler/stack_copier_unittest.cc",
+    # "profiler/stack_sampler_impl_unittest.cc",
+    # "profiler/stack_sampling_profiler_unittest.cc",
     "rand_util_unittest.cc",
     "ranges/algorithm_unittest.cc",
     "ranges/functional_unittest.cc",
@@ -3487,8 +3487,8 @@ test("base_unittests") {
     if (!is_nacl && !is_apple) {
       sources += [
         "cpu_affinity_posix_unittest.cc",
-        "profiler/stack_copier_signal_unittest.cc",
-        "profiler/thread_delegate_posix_unittest.cc",
+        # "profiler/stack_copier_signal_unittest.cc",
+        # "profiler/thread_delegate_posix_unittest.cc",
       ]
     }
   }
@@ -3518,9 +3518,9 @@ test("base_unittests") {
     }
     if (current_cpu == "arm") {
       sources += [
-        "profiler/chrome_unwind_info_android_unittest.cc",
-        "profiler/chrome_unwinder_android_unittest.cc",
-        "profiler/chrome_unwinder_android_v2_unittest.cc",
+        # "profiler/chrome_unwind_info_android_unittest.cc",
+        # "profiler/chrome_unwinder_android_unittest.cc",
+        # "profiler/chrome_unwinder_android_v2_unittest.cc",
       ]
     }
     if (!exclude_unwind_tables &&

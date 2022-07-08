@@ -131,7 +131,8 @@ TEST_F(RefCountedTest, ThreadSafe) {
   constexpr size_t kIncrementsPerThread = 10000;
   constexpr size_t kNumThreads = 64;
   auto incrementer = [](Ref<TestObject> ref) {
-    for (size_t i = 0; i < kIncrementsPerThread; ++i) {
+    constexpr size_t kIncrementsPerThread_copy = 10000;
+    for (size_t i = 0; i < kIncrementsPerThread_copy; ++i) {
       Ref<TestObject> copy = ref;
       copy->Increment();
     }

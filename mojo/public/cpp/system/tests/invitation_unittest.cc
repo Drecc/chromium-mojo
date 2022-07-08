@@ -333,14 +333,22 @@ DEFINE_TEST_CLIENT(CppProcessErrorsClient) {
   EXPECT_EQ(kDisconnectMessage, ReadMessage(pipe));
 }
 
+#if !BUILDFLAG(IS_FUCHSIA)
+
 INSTANTIATE_TEST_SUITE_P(All,
                          InvitationCppTest,
-                         testing::Values(TransportType::kChannel
-#if !BUILDFLAG(IS_FUCHSIA)
-                                         ,
+                         testing::Values(TransportType::kChannel,
                                          TransportType::kChannelServer
-#endif
                                          ));
+
+#else
+
+INSTANTIATE_TEST_SUITE_P(All,
+                         InvitationCppTest,
+                         testing::Values(TransportType::kChannel));
+                         
+#endif
+
 
 }  // namespace
 }  // namespace mojo

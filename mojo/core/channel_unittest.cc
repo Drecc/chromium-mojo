@@ -478,8 +478,8 @@ TEST(ChannelTest, PeerStressTest) {
       Channel::HandlePolicy::kRejectHandles, peer_thread.task_runner());
 
   // Send a lot of messages, followed by a final terminating message.
-  auto send_lots_of_messages = [](scoped_refptr<Channel> channel) {
-    for (size_t i = 0; i < kLotsOfMessages; ++i) {
+  auto send_lots_of_messages = [](scoped_refptr<Channel> channel, size_t lotsOfMessages) {
+    for (size_t i = 0; i < lotsOfMessages; ++i) {
       channel->Write(Channel::Message::CreateMessage(0, 0));
     }
   };
@@ -493,20 +493,20 @@ TEST(ChannelTest, PeerStressTest) {
   channel_a->Start();
   channel_b->Start();
 
-  send_lots_of_messages(channel_a);
-  send_lots_of_messages(channel_b);
+  send_lots_of_messages(channel_a, kLotsOfMessages);
+  send_lots_of_messages(channel_b, kLotsOfMessages);
 
   base::ThreadTaskRunnerHandle::Get()->PostTask(
-      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_a));
+      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_a, kLotsOfMessages));
   base::ThreadTaskRunnerHandle::Get()->PostTask(
-      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_a));
+      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_a, kLotsOfMessages));
   base::ThreadTaskRunnerHandle::Get()->PostTask(
       FROM_HERE, base::BindOnce(send_final_message, channel_a));
 
   peer_thread.task_runner()->PostTask(
-      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_b));
+      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_b, kLotsOfMessages));
   peer_thread.task_runner()->PostTask(
-      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_b));
+      FROM_HERE, base::BindOnce(send_lots_of_messages, channel_b, kLotsOfMessages));
   peer_thread.task_runner()->PostTask(
       FROM_HERE, base::BindOnce(send_final_message, channel_b));
 

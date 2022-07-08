@@ -68,8 +68,12 @@ class StateBitmap final {
 
   using CellType = uintptr_t;
   static constexpr size_t kBitsPerCell = sizeof(CellType) * CHAR_BIT;
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  static constexpr size_t kBitsNeededForAllocation = 2;
+#else
   static constexpr size_t kBitsNeededForAllocation =
       base::bits::Log2Floor(static_cast<size_t>(State::kNumOfStates));
+#endif
   static constexpr CellType kStateMask = (1 << kBitsNeededForAllocation) - 1;
 
   static constexpr size_t kBitmapSize =
@@ -214,6 +218,11 @@ StateBitmap<PageSize, PageAlignment, AllocationAlignment>::Allocate(
   auto& cell = AsAtomicCell(cell_index);
   cell.fetch_or(mask, std::memory_order_relaxed);
 }
+
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#include <intrin.h>
+#define __builtin_popcount __popcnt
+#endif
 
 template <size_t PageSize, size_t PageAlignment, size_t AllocationAlignment>
 ALWAYS_INLINE bool

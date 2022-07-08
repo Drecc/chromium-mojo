@@ -30,9 +30,13 @@ inline uint16_t ByteSwap(uint16_t x) {
 #endif
 }
 
-inline uint32_t ByteSwap(uint32_t x) {
+inline constexpr uint32_t ByteSwap(uint32_t x) {
 #if defined(COMPILER_MSVC) && !defined(__clang__)
-  return _byteswap_ulong(x);
+  // MSVC at least recognizes this as a bswap
+  return ((x & 0x000000FF) << 24) |
+        ((x & 0x0000FF00) <<  8) |
+        ((x & 0x00FF0000) >>  8) |
+        ((x & 0xFF000000) >> 24);
 #else
   return __builtin_bswap32(x);
 #endif
@@ -47,7 +51,13 @@ inline constexpr uint64_t ByteSwap(uint64_t x) {
   // as of 2021, but clang as we use it in Chromium doesn't, keeping a function
   // call for a single instruction.
 #if defined(COMPILER_MSVC) && !defined(__clang__)
-  return _byteswap_uint64(x);
+  uint32_t hi = static_cast<uint32_t>(x >> 32);
+  uint32_t lo = static_cast<uint32_t>(x);
+
+  hi = ByteSwap(hi);
+  lo = ByteSwap(lo);
+
+  return (static_cast<uint64_t>(lo) << 32) | hi;
 #else
   return __builtin_bswap64(x);
 #endif

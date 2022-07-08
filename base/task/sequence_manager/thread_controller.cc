@@ -97,10 +97,7 @@ ThreadController::RunLevelTracker::TraceObserverForTesting*
     ThreadController::RunLevelTracker::trace_observer_for_testing_ = nullptr;
 
 ThreadController::RunLevelTracker::RunLevel::RunLevel(State initial_state,
-                                                      bool is_nested)
-    : is_nested_(is_nested),
-      thread_controller_sample_metadata_("ThreadController active",
-                                         base::SampleMetadataScope::kThread) {
+                                                      bool is_nested) {
   UpdateState(initial_state);
 }
 
@@ -109,22 +106,22 @@ ThreadController::RunLevelTracker::RunLevel::~RunLevel() {
   // Intentionally ordered after UpdateState(kIdle), reinstantiates
   // thread_controller_sample_metadata_ when yielding back to a parent RunLevel
   // (which is active by definition as it is currently running this one).
-  if (is_nested_) {
-    thread_controller_sample_metadata_.Set(++thread_controller_active_id_);
-  }
+  // if (is_nested_) {
+  //   thread_controller_sample_metadata_.Set(++thread_controller_active_id_);
+  // }
 }
 
-ThreadController::RunLevelTracker::RunLevel::RunLevel(RunLevel&& other)
-    : state_(std::exchange(other.state_, kIdle)),
-      is_nested_(std::exchange(other.is_nested_, false)),
-      thread_controller_sample_metadata_(
-          other.thread_controller_sample_metadata_),
-      thread_controller_active_id_(other.thread_controller_active_id_) {}
-ThreadController::RunLevelTracker::RunLevel&
-ThreadController::RunLevelTracker::RunLevel::operator=(RunLevel&& other) {
-  state_ = std::exchange(other.state_, kIdle);
-  return *this;
-}
+// ThreadController::RunLevelTracker::RunLevel::RunLevel(RunLevel&& other)
+//     : state_(std::exchange(other.state_, kIdle)),
+//       is_nested_(std::exchange(other.is_nested_, false)),
+//       thread_controller_sample_metadata_(
+//           other.thread_controller_sample_metadata_),
+//       thread_controller_active_id_(other.thread_controller_active_id_) {}
+// ThreadController::RunLevelTracker::RunLevel&
+// ThreadController::RunLevelTracker::RunLevel::operator=(RunLevel&& other) {
+//   state_ = std::exchange(other.state_, kIdle);
+//   return *this;
+// }
 
 void ThreadController::RunLevelTracker::RunLevel::UpdateState(State new_state) {
   // The only state that can be redeclared is idle, anything else should be a
@@ -140,17 +137,17 @@ void ThreadController::RunLevelTracker::RunLevel::UpdateState(State new_state) {
     return;
 
   // Change of state.
-  if (is_active) {
-    TRACE_EVENT_BEGIN0("base", "ThreadController active");
-    // Overriding the annotation from the previous RunLevel is intentional. Only
-    // the top RunLevel is ever updated, which holds the relevant state.
-    thread_controller_sample_metadata_.Set(++thread_controller_active_id_);
-  } else {
-    thread_controller_sample_metadata_.Remove();
-    TRACE_EVENT_END0("base", "ThreadController active");
-    // TODO(crbug.com/1021571): Remove this once fixed.
-    PERFETTO_INTERNAL_ADD_EMPTY_EVENT();
-  }
+  // if (is_active) {
+  //   TRACE_EVENT_BEGIN0("base", "ThreadController active");
+  //   // Overriding the annotation from the previous RunLevel is intentional. Only
+  //   // the top RunLevel is ever updated, which holds the relevant state.
+  //   thread_controller_sample_metadata_.Set(++thread_controller_active_id_);
+  // } else {
+  //   thread_controller_sample_metadata_.Remove();
+  //   TRACE_EVENT_END0("base", "ThreadController active");
+  //   // TODO(crbug.com/1021571): Remove this once fixed.
+  //   PERFETTO_INTERNAL_ADD_EMPTY_EVENT();
+  // }
 
   if (trace_observer_for_testing_) {
     if (is_active)

@@ -217,7 +217,11 @@ inline StatsCollector::MetadataString StatsCollector::ToUMAString(
     case ScannerId::kOverall:
       return "PA.PCScan." + process_name + ".Scanner";
     case ScannerId::kNumIds:
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+      __assume(false);
+#else
       __builtin_unreachable();
+#endif
   }
 }
 
@@ -235,7 +239,11 @@ inline StatsCollector::MetadataString StatsCollector::ToUMAString(
     case MutatorId::kOverall:
       return "PA.PCScan." + process_name + ".Mutator";
     case MutatorId::kNumIds:
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+      __assume(false);
+#else
       __builtin_unreachable();
+#endif
   }
 }
 

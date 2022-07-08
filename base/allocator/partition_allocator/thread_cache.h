@@ -361,7 +361,7 @@ class BASE_EXPORT ThreadCache {
   void FreeAfter(internal::PartitionFreelistEntry* head, size_t slot_size);
   static void SetGlobalLimits(PartitionRoot<>* root, float multiplier);
 
-#if BUILDFLAG(IS_NACL)
+#if BUILDFLAG(IS_NACL) || (defined(COMPILER_MSVC) && !defined(__clang__))
   // The thread cache is never used with NaCl, but its compiler doesn't
   // understand enough constexpr to handle the code below.
   static constexpr uint16_t kBucketCount = 1;
@@ -370,9 +370,11 @@ class BASE_EXPORT ThreadCache {
       internal::BucketIndexLookup::GetIndex(ThreadCache::kLargeSizeThreshold) +
       1;
 #endif
+#if !defined(COMPILER_MSVC) || defined(__clang__)
   static_assert(
       kBucketCount < internal::kNumBuckets,
       "Cannot have more cached buckets than what the allocator supports");
+#endif
 
   // On some architectures, ThreadCache::Get() can be called and return
   // something after the thread cache has been destroyed. In this case, we set

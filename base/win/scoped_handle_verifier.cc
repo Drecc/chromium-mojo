@@ -44,7 +44,9 @@ NOINLINE void ReportErrorOnScopedHandleOperation(
   auto creation_stack_copy = creation_stack;
   base::debug::Alias(&creation_stack_copy);
   CHECK(false);
+#if !defined(COMPILER_MSVC)|| defined(__clang__)
   __builtin_unreachable();
+#endif
 }
 
 NOINLINE void ReportErrorOnScopedHandleOperation(
@@ -55,7 +57,9 @@ NOINLINE void ReportErrorOnScopedHandleOperation(
   auto creation_stack_copy = creation_stack;
   base::debug::Alias(&creation_stack_copy);
   CHECK(false);
+#if !defined(COMPILER_MSVC)|| defined(__clang__)
   __builtin_unreachable();
+#endif
 }
 
 }  // namespace

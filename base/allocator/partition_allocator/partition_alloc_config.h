@@ -21,7 +21,7 @@ static_assert(sizeof(void*) != 8, "");
 #endif
 
 // PCScan supports 64 bits only.
-#if defined(PA_HAS_64_BITS_POINTERS)
+#if defined(PA_HAS_64_BITS_POINTERS) && (!defined(COMPILER_MSVC) || defined(__clang__))
 #define PA_ALLOW_PCSCAN
 #endif
 
@@ -46,7 +46,7 @@ static_assert(sizeof(void*) != 8, "");
 #endif  // defined(PA_HAS_64_BITS_POINTERS) &&
         // (BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_ANDROID))
 
-#if defined(PA_HAS_64_BITS_POINTERS)
+#if defined(PA_HAS_64_BITS_POINTERS) && (!defined(COMPILER_MSVC) || defined(__clang__))
 // Use card table to avoid races for PCScan configuration without safepoints.
 // The card table provides the guaranteee that for a marked card the underling
 // super-page is fully initialized.

@@ -238,9 +238,13 @@ struct ALIGNAS(64) BASE_EXPORT PartitionRoot {
 
       // Defines whether the root should be scanned.
       ScanMode scan_mode;
-
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+      bool with_thread_cache;
+      bool with_denser_bucket_distribution;
+#else
       bool with_thread_cache = false;
       bool with_denser_bucket_distribution = false;
+#endif
 
       bool allow_aligned_alloc;
       bool allow_cookie;
@@ -1326,7 +1330,9 @@ ALWAYS_INLINE void PartitionRoot<thread_safe>::RawFree(uintptr_t slot_start,
   // OS page. No need to write to the second one as well.
   //
   // Do not move the store above inside the locked section.
+#if !defined(COMPILER_MSVC) || defined(__clang__)
   __asm__ __volatile__("" : : "r"(slot_start) : "memory");
+#endif
 
   ::partition_alloc::internal::ScopedGuard guard{lock_};
   FreeInSlotSpan(slot_start, slot_span);

@@ -6,6 +6,8 @@
 
 #include "build/build_config.h"
 
+#include "base/compiler_specific.h"
+
 // location.h is a widely included header and its size can significantly impact
 // build time. Try not to raise this limit unless absolutely necessary. See
 // https://chromium.googlesource.com/chromium/src/+/HEAD/docs/wmax_tokens.md
@@ -17,7 +19,6 @@
 #include <intrin.h>
 #endif
 
-#include "base/compiler_specific.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "base/trace_event/base_tracing.h"

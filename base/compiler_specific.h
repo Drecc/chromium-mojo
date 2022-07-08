@@ -8,7 +8,10 @@
 #include "build/build_config.h"
 
 #if defined(COMPILER_MSVC) && !defined(__clang__)
-#error "Only clang-cl is supported on Windows, see https://crbug.com/988071"
+// #error "Only clang-cl is supported on Windows, see https://crbug.com/988071"
+#define __has_attribute(a) false
+#define NACL_TC_REV
+#pragma warning(disable: 4838 4267 4312 4319 4715 4005 4067)
 #endif
 
 // This is a wrapper around `__has_cpp_attribute`, which can be used to test for
