@@ -1,0 +1,9 @@
+solutions = [
+  {
+    "name": "src",
+    "url": "https://github.com/Drecc/chromium-mojo.git@102.0.5005.78",
+    "managed": False,
+    "custom_deps": {},
+    "custom_vars": {},
+  },
+]
