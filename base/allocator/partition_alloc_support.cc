@@ -46,6 +46,7 @@ namespace {
 
 #if defined(PA_ALLOW_PCSCAN)
 
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 constexpr const char* ScannerIdToTracingString(
     internal::StatsCollector::ScannerId id) {
   switch (id) {
@@ -58,11 +59,7 @@ constexpr const char* ScannerIdToTracingString(
     case internal::StatsCollector::ScannerId::kOverall:
       return "PCScan.Scanner";
     case internal::StatsCollector::ScannerId::kNumIds:
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-      __assume(false);
-#else
       __builtin_unreachable();
-#endif
   }
 }
 
@@ -78,41 +75,50 @@ constexpr const char* MutatorIdToTracingString(
     case internal::StatsCollector::MutatorId::kOverall:
       return "PCScan.Mutator";
     case internal::StatsCollector::MutatorId::kNumIds:
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-      __assume(false);
-#else
       __builtin_unreachable();
-#endif
   }
 }
+#endif  // BUILDFLAG(ENABLE_BASE_TRACING)
 
 // Inject TRACE_EVENT_BEGIN/END, TRACE_COUNTER1, and UmaHistogramTimes.
 class StatsReporterImpl final : public partition_alloc::StatsReporter {
  public:
   void ReportTraceEvent(internal::StatsCollector::ScannerId id,
                         [[maybe_unused]] const PlatformThreadId tid,
-                        TimeTicks start_time,
-                        TimeTicks end_time) override {
+                        int64_t start_time_ticks_internal_value,
+                        int64_t end_time_ticks_internal_value) override {
+#if BUILDFLAG(ENABLE_BASE_TRACING)
     // TRACE_EVENT_* macros below drop most parameters when tracing is
     // disabled at compile time.
     const char* tracing_id = ScannerIdToTracingString(id);
+    const TimeTicks start_time =
+        TimeTicks::FromInternalValue(start_time_ticks_internal_value);
+    const TimeTicks end_time =
+        TimeTicks::FromInternalValue(end_time_ticks_internal_value);
     TRACE_EVENT_BEGIN(kTraceCategory, perfetto::StaticString(tracing_id),
                       perfetto::ThreadTrack::ForThread(tid), start_time);
     TRACE_EVENT_END(kTraceCategory, perfetto::ThreadTrack::ForThread(tid),
                     end_time);
+#endif  // BUILDFLAG(ENABLE_BASE_TRACING)
   }
 
   void ReportTraceEvent(internal::StatsCollector::MutatorId id,
                         [[maybe_unused]] const PlatformThreadId tid,
-                        TimeTicks start_time,
-                        TimeTicks end_time) override {
+                        int64_t start_time_ticks_internal_value,
+                        int64_t end_time_ticks_internal_value) override {
+#if BUILDFLAG(ENABLE_BASE_TRACING)
     // TRACE_EVENT_* macros below drop most parameters when tracing is
     // disabled at compile time.
     const char* tracing_id = MutatorIdToTracingString(id);
+    const TimeTicks start_time =
+        TimeTicks::FromInternalValue(start_time_ticks_internal_value);
+    const TimeTicks end_time =
+        TimeTicks::FromInternalValue(end_time_ticks_internal_value);
     TRACE_EVENT_BEGIN(kTraceCategory, perfetto::StaticString(tracing_id),
                       perfetto::ThreadTrack::ForThread(tid), start_time);
     TRACE_EVENT_END(kTraceCategory, perfetto::ThreadTrack::ForThread(tid),
                     end_time);
+#endif  // BUILDFLAG(ENABLE_BASE_TRACING)
   }
 
   void ReportSurvivedQuarantineSize(size_t survived_size) override {
@@ -128,7 +134,8 @@ class StatsReporterImpl final : public partition_alloc::StatsReporter {
                    1000 * survived_rate);
   }
 
-  void ReportStats(const char* stats_name, TimeDelta sample) override {
+  void ReportStats(const char* stats_name, int64_t sample_in_usec) override {
+    TimeDelta sample = Microseconds(sample_in_usec);
     UmaHistogramTimes(stats_name, sample);
   }
 

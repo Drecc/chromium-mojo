@@ -64,10 +64,6 @@ inline void abort_noreturn() { abort(); }
 #endif
 #endif
 
-#if defined(_MSC_VER) && !defined(__clang__)
-#pragma warning(disable: 4067)
-#endif
-
 #if defined(__clang__) && __has_attribute(uninitialized)
 #define DOUBLE_CONVERSION_STACK_UNINITIALIZED __attribute__((uninitialized))
 #else

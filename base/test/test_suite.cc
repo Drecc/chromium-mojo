@@ -278,10 +278,7 @@ void InitializeLogging() {
   constexpr auto kLoggingDest =
       logging::LOG_TO_SYSTEM_DEBUG_LOG | logging::LOG_TO_STDERR;
 #endif
-  logging::LoggingSettings settings;
-  settings.logging_dest = kLoggingDest;
-
-  CHECK(logging::InitLogging(settings));
+  CHECK(logging::InitLogging({.logging_dest = kLoggingDest}));
 
   // We want process and thread IDs because we may have multiple processes.
 #if BUILDFLAG(IS_ANDROID)

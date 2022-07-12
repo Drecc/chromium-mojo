@@ -141,31 +141,19 @@ __declspec(restrict) void* _aligned_recalloc(void* address,
                                              size_t size,
                                              size_t alignment) {
   CHECK(false) << "This routine has not been implemented";
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  __assume(false);
-#else
   __builtin_unreachable();
-#endif
 }
 
 size_t _aligned_msize(void* address, size_t alignment, size_t offset) {
   CHECK(false) << "This routine has not been implemented";
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  __assume(false);
-#else
   __builtin_unreachable();
-#endif
 }
 
 __declspec(restrict) void* _aligned_offset_malloc(size_t size,
                                                   size_t alignment,
                                                   size_t offset) {
   CHECK(false) << "This routine has not been implemented";
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  __assume(false);
-#else
   __builtin_unreachable();
-#endif
 }
 
 __declspec(restrict) void* _aligned_offset_realloc(void* address,
@@ -173,11 +161,7 @@ __declspec(restrict) void* _aligned_offset_realloc(void* address,
                                                    size_t alignment,
                                                    size_t offset) {
   CHECK(false) << "This routine has not been implemented";
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  __assume(false);
-#else
   __builtin_unreachable();
-#endif
 }
 
 __declspec(restrict) void* _aligned_offset_recalloc(void* address,
@@ -186,11 +170,7 @@ __declspec(restrict) void* _aligned_offset_recalloc(void* address,
                                                     size_t alignment,
                                                     size_t offset) {
   CHECK(false) << "This routine has not been implemented";
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  __assume(false);
-#else
   __builtin_unreachable();
-#endif
 }
 
 }  // extern "C"

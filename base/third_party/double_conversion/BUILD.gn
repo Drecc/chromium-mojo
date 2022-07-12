@@ -5,13 +5,10 @@
 config("config") {
   visibility = [ ":double_conversion" ]
 
-  if (is_clang) {
-    cflags = [
-      "-Wno-unused-const-variable",
-      "-Wno-unused-function",
-    ]
-  }
-
+  cflags = [
+    "-Wno-unused-const-variable",
+    "-Wno-unused-function",
+  ]
 }
 
 static_library("double_conversion") {

@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-// #include "base/allocator/partition_allocator/page_allocator.h"
+#include "base/allocator/partition_allocator/page_allocator.h"
 #include "base/atomicops.h"
 #include "base/bits.h"
 #include "base/feature_list.h"
@@ -39,10 +39,6 @@
 #include <lib/zx/vmar.h>
 #include <zircon/types.h>
 #include "base/fuchsia/fuchsia_logging.h"
-#endif
-
-#if BUILDFLAG(USE_PARTITION_ALLOC)
-#include "base/allocator/partition_allocator/page_allocator.h"
 #endif
 
 #if BUILDFLAG(ENABLE_BASE_TRACING)
@@ -490,10 +486,8 @@ void DiscardableSharedMemory::ReleaseMemoryIfPossible(size_t offset,
     DPLOG(ERROR) << "madvise() failed";
   }
 #else   // BUILDFLAG(IS_POSIX) && !BUILDFLAG(IS_NACL)
-#if BUILDFLAG(USE_PARTITION_ALLOC)
   DiscardSystemPages(
       static_cast<char*>(shared_memory_mapping_.memory()) + offset, length);
-#endif
 #endif  // BUILDFLAG(IS_POSIX) && !BUILDFLAG(IS_NACL)
 }
 

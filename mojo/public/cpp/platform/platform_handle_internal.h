@@ -19,8 +19,8 @@ class PlatformHandleInternal {
  public:
   static MojoSharedBufferGuid MarshalUnguessableToken(
       const base::UnguessableToken& token) {
-    return {token.GetHighForSerialization(),
-            token.GetLowForSerialization()};
+    return {.high = token.GetHighForSerialization(),
+            .low = token.GetLowForSerialization()};
   }
   static base::UnguessableToken UnmarshalUnguessableToken(
       const MojoSharedBufferGuid* guid) {

@@ -8,12 +8,13 @@
 
 #include "base/allocator/buildflags.h"
 #include "base/allocator/partition_allocator/address_pool_manager.h"
-#include "base/allocator/partition_allocator/base/bits.h"
 #include "base/allocator/partition_allocator/oom.h"
 #include "base/allocator/partition_allocator/page_allocator.h"
 #include "base/allocator/partition_allocator/page_allocator_constants.h"
 #include "base/allocator/partition_allocator/partition_address_space.h"
 #include "base/allocator/partition_allocator/partition_alloc.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/bits.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/debug/alias.h"
 #include "base/allocator/partition_allocator/partition_alloc_check.h"
 #include "base/allocator/partition_allocator/partition_alloc_config.h"
 #include "base/allocator/partition_allocator/partition_alloc_constants.h"
@@ -26,7 +27,6 @@
 #include "base/allocator/partition_allocator/starscan/state_bitmap.h"
 #include "base/allocator/partition_allocator/tagging.h"
 #include "base/check.h"
-#include "base/debug/alias.h"
 #include "build/build_config.h"
 
 namespace partition_alloc::internal {
@@ -37,7 +37,7 @@ template <bool thread_safe>
 [[noreturn]] NOINLINE void PartitionOutOfMemoryMappingFailure(
     PartitionRoot<thread_safe>* root,
     size_t size) LOCKS_EXCLUDED(root->lock_) {
-  NO_CODE_FOLDING();
+  PA_NO_CODE_FOLDING();
   root->OutOfMemory(size);
   IMMEDIATE_CRASH();  // Not required, kept as documentation.
 }
@@ -46,7 +46,7 @@ template <bool thread_safe>
 [[noreturn]] NOINLINE void PartitionOutOfMemoryCommitFailure(
     PartitionRoot<thread_safe>* root,
     size_t size) LOCKS_EXCLUDED(root->lock_) {
-  NO_CODE_FOLDING();
+  PA_NO_CODE_FOLDING();
   root->OutOfMemory(size);
   IMMEDIATE_CRASH();  // Not required, kept as documentation.
 }
@@ -564,17 +564,10 @@ ALWAYS_INLINE SlotSpanMetadata<thread_safe>*
 PartitionBucket<thread_safe>::AllocNewSlotSpan(PartitionRoot<thread_safe>* root,
                                                int flags,
                                                size_t slot_span_alignment) {
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  PA_DCHECK(!(static_cast<uintptr_t>(root->next_partition_page) %
-              PartitionPageSize()));
-  PA_DCHECK(!(static_cast<uintptr_t>(root->next_partition_page_end) %
-              PartitionPageSize()));
-#else
   PA_DCHECK(!(reinterpret_cast<uintptr_t>(root->next_partition_page) %
               PartitionPageSize()));
   PA_DCHECK(!(reinterpret_cast<uintptr_t>(root->next_partition_page_end) %
               PartitionPageSize()));
-#endif
 
   size_t num_partition_pages = get_pages_per_slot_span();
   size_t slot_span_reservation_size = num_partition_pages

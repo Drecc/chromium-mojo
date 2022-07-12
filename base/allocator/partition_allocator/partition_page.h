@@ -13,8 +13,8 @@
 #include "base/allocator/buildflags.h"
 #include "base/allocator/partition_allocator/address_pool_manager.h"
 #include "base/allocator/partition_allocator/address_pool_manager_types.h"
-#include "base/allocator/partition_allocator/base/bits.h"
 #include "base/allocator/partition_allocator/partition_address_space.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/bits.h"
 #include "base/allocator/partition_allocator/partition_alloc_check.h"
 #include "base/allocator/partition_allocator/partition_alloc_constants.h"
 #include "base/allocator/partition_allocator/partition_alloc_forward.h"
@@ -117,13 +117,9 @@ using AllocationStateMap =
 //   booted out of the active list. If there are no suitable active slot spans
 //   found, an empty or decommitted slot spans (if one exists) will be pulled
 //   from the empty/decommitted list on to the active list.
+#pragma pack(push, 1)
 template <bool thread_safe>
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-#pragma pack(push,1)
 struct SlotSpanMetadata {
-#else
-struct __attribute__((packed)) SlotSpanMetadata {
-#endif
  private:
   PartitionFreelistEntry* freelist_head = nullptr;
 
@@ -307,11 +303,7 @@ struct __attribute__((packed)) SlotSpanMetadata {
         empty_cache_index_(0),
         unused2_(0) {}
 };
-#if defined(COMPILER_MSVC) && !defined(__clang__)
 #pragma pack(pop)
-#endif
-
-
 static_assert(sizeof(SlotSpanMetadata<ThreadSafe>) <= kPageMetadataSize,
               "SlotSpanMetadata must fit into a Page Metadata slot.");
 
@@ -334,21 +326,12 @@ struct SubsequentPageMetadata {
 // first page of a slot span, describes that slot span. If a slot span spans
 // more than 1 page, the page metadata may contain rudimentary additional
 // information.
+// "Pack" the union so that common page metadata still fits within
+// kPageMetadataSize. (SlotSpanMetadata is also "packed".)
+#pragma pack(push, 1)
 template <bool thread_safe>
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-#pragma pack(push,1)
 struct PartitionPage {
-#else
-struct __attribute__((packed)) PartitionPage {
-#endif
-  // "Pack" the union so that common page metadata still fits within
-  // kPageMetadataSize. (SlotSpanMetadata is also "packed".)
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-#pragma pack(push,1)
   union {
-#else
-  union __attribute__((packed)) {
-#endif
     SlotSpanMetadata<thread_safe> slot_span_metadata;
 
     SubsequentPageMetadata subsequent_page_metadata;
@@ -360,9 +343,6 @@ struct __attribute__((packed)) PartitionPage {
     // This makes sure that this is respected no matter the architecture.
     char optional_padding[kPageMetadataSize - sizeof(uint8_t) - sizeof(bool)];
   };
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-#pragma pack(pop)
-#endif
 
   // The first PartitionPage of the slot span holds its metadata. This offset
   // tells how many pages in from that first page we are.
@@ -389,11 +369,7 @@ struct __attribute__((packed)) PartitionPage {
 
   ALWAYS_INLINE static PartitionPage* FromAddr(uintptr_t address);
 };
-#if defined(COMPILER_MSVC) && !defined(__clang__)
 #pragma pack(pop)
-#endif
-
-
 static_assert(sizeof(PartitionPage<ThreadSafe>) == kPageMetadataSize,
               "PartitionPage must be able to fit in a metadata slot");
 

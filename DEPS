@@ -276,7 +276,7 @@ vars = {
   #
   # Note this revision should be updated with
   # third_party/boringssl/roll_boringssl.py, not roll-dep.
-  'boringssl_revision': '27ffcc6e19bbafddf1b59ec0bc6df2904de7eb2c',
+  'boringssl_revision': '227ff6e6425283b83594a91a1aa81cc78f1a88df',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling google-toolbox-for-mac
   # and whatever else without interference from each other.
@@ -482,26 +482,26 @@ deps = {
     'condition': 'host_os == "win"',
   },
   'src/third_party/perfetto':
-    Var('android_git') + '/platform/external/perfetto.git' + '@' + '4c15672c0a9e16ac762aa5148f1264350fd49b98',
+    Var('android_git') + '/platform/external/perfetto.git' + '@' + 'f7b904a467cb55e4ff3a2ded74354e8e8d8ffabf',
   'src/third_party/boringssl/src':
     Var('boringssl_git') + '/boringssl.git' + '@' +  Var('boringssl_revision'),
   'src/third_party/ced/src':
     Var('chromium_git') + '/external/github.com/google/compact_enc_det.git' + '@' + 'ba412eaaacd3186085babcd901679a48863c7dd5',
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'e1f2f4f42368555835a7a0894188716556c32871',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '585942f33d939a11f4600bd5042649b7ca189008',
   'src/third_party/googletest/src':
     Var('chromium_git') + '/external/github.com/google/googletest.git' + '@' + Var('googletest_revision'),
   'src/third_party/sqlite/src':
-    Var('chromium_git') + '/chromium/deps/sqlite.git' + '@' + 'a54d5d154f4b349705a67107ed190d1943f94646',  
+    Var('chromium_git') + '/chromium/deps/sqlite.git' + '@' + 'cb47d7089f714e4514f126dfa8ac630cab78ea32',  
   'src/third_party/depot_tools':
-    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' + '932a621ece2316026926d615bb04d3006077ab79',
+    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' + '8b707654318d0b2b24c0b0bbeeef0ee8b0865007',
   'src/third_party/nasm': {
     'url': Var('chromium_git') + '/chromium/deps/nasm.git' + '@' +
     '9215e8e1d0fe474ffd3e16c1a07a0f97089e6224'
   },
   'src/third_party/jsoncpp/source':
     Var('chromium_git') + '/external/github.com/open-source-parsers/jsoncpp.git'
-      + '@' + '9059f5cad030ba11d37818847443a53918c327b1', # release 1.9.4
+      + '@' + '42e892d96e47b1f6e29844cc705e148ec4856448', # release 1.9.4
 }
 
 hooks = [

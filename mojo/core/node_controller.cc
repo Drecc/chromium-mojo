@@ -32,7 +32,7 @@
 #endif
 
 #if !BUILDFLAG(IS_NACL)
-// #include "crypto/random.h"
+#include "crypto/random.h"
 #endif
 
 namespace mojo {
@@ -40,17 +40,17 @@ namespace core {
 
 namespace {
 
-// #if BUILDFLAG(IS_NACL)
+#if BUILDFLAG(IS_NACL)
 template <typename T>
 void GenerateRandomName(T* out) {
   base::RandBytes(out, sizeof(T));
 }
-// #else
-// template <typename T>
-// void GenerateRandomName(T* out) {
-//   crypto::RandBytes(out, sizeof(T));
-// }
-// #endif
+#else
+template <typename T>
+void GenerateRandomName(T* out) {
+  crypto::RandBytes(out, sizeof(T));
+}
+#endif
 
 ports::NodeName GetRandomNodeName() {
   ports::NodeName name;

@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "base/allocator/buildflags.h"
+#include "base/allocator/partition_allocator/partition_alloc_config.h"
 #include "base/callback_helpers.h"
 #include "base/check_op.h"
 #include "base/compiler_specific.h"
@@ -31,10 +32,6 @@
 #if BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) && \
     defined(PA_THREAD_CACHE_SUPPORTED)
 #include "base/allocator/partition_allocator/thread_cache.h"
-#endif
-
-#if BUILDFLAG(USE_PARTITION_ALLOC)
-#include "base/allocator/partition_allocator/partition_alloc_config.h"
 #endif
 
 namespace base {

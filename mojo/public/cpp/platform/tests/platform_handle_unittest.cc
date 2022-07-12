@@ -247,24 +247,20 @@ TEST_P(PlatformHandleTest, CStructConversion) {
   EXPECT_EQ(kTestData, GetObjectContents(handle));
 }
 
+INSTANTIATE_TEST_SUITE_P(All,
+                         PlatformHandleTest,
 #if BUILDFLAG(IS_WIN)
-
-INSTANTIATE_TEST_SUITE_P(All,
-                         PlatformHandleTest,
                          testing::Values(HandleType::kHandle)
-);
+#elif BUILDFLAG(IS_FUCHSIA)
+                         testing::Values(HandleType::kHandle,
+                                         HandleType::kFileDescriptor)
 #elif BUILDFLAG(IS_MAC)
-INSTANTIATE_TEST_SUITE_P(All,
-                         PlatformHandleTest,
                          testing::Values(HandleType::kFileDescriptor,
                                          HandleType::kMachPort)
-);
 #elif BUILDFLAG(IS_POSIX)
-INSTANTIATE_TEST_SUITE_P(All,
-                         PlatformHandleTest,
                          testing::Values(HandleType::kFileDescriptor)
-);
 #endif
+);
 
 }  // namespace
 }  // namespace mojo

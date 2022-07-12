@@ -42,10 +42,6 @@
 #include "base/win/windows_types.h"
 #endif
 
-// Marks a field as excluded from the raw_ptr usage enforcement clang plugin.
-// Example: RAW_PTR_EXCLUSION Foo* foo_;
-#define RAW_PTR_EXCLUSION __attribute__((annotate("raw_ptr_exclusion")))
-
 namespace cc {
 class Scheduler;
 }
@@ -856,12 +852,6 @@ class TRIVIAL_ABI GSL_POINTER raw_ptr {
     return *this += -delta_elems;
   }
 
-#if defined(OS_WIN) && !defined(__clang__)
-  ALWAYS_INLINE T* operator+(size_t delta_elems) const {
-    return Impl::Advance(wrapped_ptr_, delta_elems);
-  }
-#endif
-
   // Stop referencing the underlying pointer and free its memory. Compared to
   // raw delete calls, this avoids the raw_ptr to be temporarily dangling
   // during the free operation, which will lead to taking the slower path that
@@ -1056,6 +1046,37 @@ ALWAYS_INLINE bool operator>=(const raw_ptr<U, I>& lhs,
                               const raw_ptr<V, I>& rhs) {
   return lhs.GetForComparison() >= rhs.GetForComparison();
 }
+
+// Template helpers for working with T* or raw_ptr<T>.
+template <typename T>
+struct IsPointer : std::false_type {};
+
+template <typename T>
+struct IsPointer<T*> : std::true_type {};
+
+template <typename T, typename I>
+struct IsPointer<raw_ptr<T, I>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool IsPointerV = IsPointer<T>::value;
+
+template <typename T>
+struct RemovePointer {
+  using type = T;
+};
+
+template <typename T>
+struct RemovePointer<T*> {
+  using type = T;
+};
+
+template <typename T, typename I>
+struct RemovePointer<raw_ptr<T, I>> {
+  using type = T;
+};
+
+template <typename T>
+using RemovePointerT = typename RemovePointer<T>::type;
 
 }  // namespace base
 

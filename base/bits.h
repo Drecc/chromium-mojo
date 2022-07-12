@@ -25,6 +25,8 @@ namespace base {
 namespace bits {
 
 // Returns true iff |value| is a power of 2.
+//
+// TODO(pkasting): When C++20 is available, replace with std::has_single_bit().
 template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
 constexpr bool IsPowerOfTwo(T value) {
   // From "Hacker's Delight": Section 2.1 Manipulating Rightmost Bits.
@@ -79,6 +81,9 @@ inline T* AlignUp(T* ptr, size_t alignment) {
 //
 // Prefer the clang path on Windows, as _BitScanReverse() and friends are not
 // constexpr.
+//
+// TODO(pkasting): When C++20 is available, replace with std::countl_zero() and
+// similar.
 #if defined(COMPILER_MSVC) && !defined(__clang__)
 
 template <typename T, unsigned bits = sizeof(T) * 8>
@@ -153,13 +158,9 @@ ALWAYS_INLINE
 #endif
 }
 
-ALWAYS_INLINE uint32_t CountLeadingZeroBits32(uint32_t x) {
-  return CountLeadingZeroBits(x);
-}
-
-ALWAYS_INLINE uint64_t CountLeadingZeroBits64(uint64_t x) {
-  return CountLeadingZeroBits(x);
-}
+// Used in place of "constexpr" below for things which are conditionally
+// constexpr depending on whether the functions above are constexpr.
+#define BASE_BITOPS_CONSTEXPR
 
 #elif defined(COMPILER_GCC) || defined(__clang__)
 
@@ -191,50 +192,44 @@ ALWAYS_INLINE constexpr
                        : bits;
 }
 
-ALWAYS_INLINE constexpr uint32_t CountLeadingZeroBits32(uint32_t x) {
+#define BASE_BITOPS_CONSTEXPR constexpr
+
+#endif
+
+ALWAYS_INLINE BASE_BITOPS_CONSTEXPR uint32_t
+CountLeadingZeroBits32(uint32_t x) {
   return CountLeadingZeroBits(x);
 }
 
-ALWAYS_INLINE constexpr uint64_t CountLeadingZeroBits64(uint64_t x) {
+ALWAYS_INLINE BASE_BITOPS_CONSTEXPR uint64_t
+CountLeadingZeroBits64(uint64_t x) {
   return CountLeadingZeroBits(x);
 }
 
-#endif
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-ALWAYS_INLINE size_t CountLeadingZeroBitsSizeT(size_t x) {
-#else
-ALWAYS_INLINE constexpr size_t CountLeadingZeroBitsSizeT(size_t x) {
-#endif
+ALWAYS_INLINE BASE_BITOPS_CONSTEXPR size_t CountLeadingZeroBitsSizeT(size_t x) {
   return CountLeadingZeroBits(x);
 }
 
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-ALWAYS_INLINE size_t CountTrailingZeroBitsSizeT(size_t x) {
-#else
-ALWAYS_INLINE constexpr size_t CountTrailingZeroBitsSizeT(size_t x) {
-#endif
+ALWAYS_INLINE BASE_BITOPS_CONSTEXPR size_t
+CountTrailingZeroBitsSizeT(size_t x) {
   return CountTrailingZeroBits(x);
 }
+
+#undef BASE_BITOPS_CONSTEXPR
 
 // Returns the integer i such as 2^i <= n < 2^(i+1).
 //
 // There is a common `BitLength` function, which returns the number of bits
 // required to represent a value. Rather than implement that function,
 // use `Log2Floor` and add 1 to the result.
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-ALWAYS_INLINE int Log2Floor(uint32_t n) {
-#else
+//
+// TODO(pkasting): When C++20 is available, replace with std::bit_xxx().
 constexpr int Log2Floor(uint32_t n) {
-#endif
   return 31 - CountLeadingZeroBits(n);
 }
 
 // Returns the integer i such as 2^(i-1) < n <= 2^i.
-#if defined(COMPILER_MSVC) && !defined(__clang__)
 constexpr int Log2Ceiling(uint32_t n) {
-#else
-ALWAYS_INLINE int Log2Ceiling(uint32_t n) {
-#endif
   // When n == 0, we want the function to return -1.
   // When n == 0, (n - 1) will underflow to 0xFFFFFFFF, which is
   // why the statement below starts with (n ? 32 : -1).

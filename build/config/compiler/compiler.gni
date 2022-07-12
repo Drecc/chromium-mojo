@@ -30,22 +30,16 @@ if (is_ios) {
 
 declare_args() {
   # Set to true to use the android unwinder V2 implementation.
-  use_android_unwinder_v2 = false
-
-  # If this running on a GPU FYI bot.
-  # TODO(https://crbug.com/1233871): Remove this again.
-  is_gpu_fyi_bot = false
+  use_android_unwinder_v2 = true
 }
 
 declare_args() {
   # Set to true to use lld, the LLVM linker.
   # In late bring-up on macOS (see docs/mac_lld.md).
   # Tentatively used on iOS, except in cronet builds (cronet still supports
-  # 32-bit builds, which lld doesn't support) or when targeting "catalyst"
-  # (which lld doesn't support either).
+  # 32-bit builds, which lld doesn't support).
   # The default linker everywhere else.
-  use_lld = is_clang && !(is_mac && is_gpu_fyi_bot) && current_os != "zos" &&
-            !(is_ios && (is_cronet_build || target_environment == "catalyst"))
+  use_lld = is_clang && current_os != "zos" && !(is_ios && is_cronet_build)
 }
 
 declare_args() {
@@ -53,7 +47,7 @@ declare_args() {
   # warnings with known toolchains. Allow overriding this e.g. for Chromium
   # builds on Linux that could use a different version of the compiler.
   # With GCC, warnings in no-Chromium code are always not treated as errors.
-  treat_warnings_as_errors = is_clang
+  treat_warnings_as_errors = true
 
   # How many symbols to include in the build. This affects the performance of
   # the build since the symbols are large and dealing with them is slow.
@@ -110,7 +104,7 @@ declare_args() {
   # Whether an error should be raised on attempts to make debug builds with
   # is_component_build=false. Very large debug symbols can have unwanted side
   # effects so this is enforced by default for chromium.
-  forbid_non_component_debug_builds = build_with_chromium && !is_win
+  forbid_non_component_debug_builds = build_with_chromium
 
   # Exclude unwind tables by default for official builds as unwinding can be
   # done from stack dumps produced by Crashpad at a later time "offline" in the

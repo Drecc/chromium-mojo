@@ -20,11 +20,16 @@
 #include "base/allocator/partition_allocator/address_pool_manager.h"
 #include "base/allocator/partition_allocator/address_pool_manager_bitmap.h"
 #include "base/allocator/partition_allocator/allocation_guard.h"
-#include "base/allocator/partition_allocator/base/bits.h"
 #include "base/allocator/partition_allocator/page_allocator.h"
 #include "base/allocator/partition_allocator/page_allocator_constants.h"
 #include "base/allocator/partition_allocator/partition_address_space.h"
 #include "base/allocator/partition_allocator/partition_alloc.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/bits.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/cpu.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/debug/alias.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/memory/ref_counted.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/memory/scoped_refptr.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/no_destructor.h"
 #include "base/allocator/partition_allocator/partition_alloc_check.h"
 #include "base/allocator/partition_allocator/partition_alloc_config.h"
 #include "base/allocator/partition_allocator/partition_alloc_constants.h"
@@ -41,13 +46,7 @@
 #include "base/allocator/partition_allocator/tagging.h"
 #include "base/allocator/partition_allocator/thread_cache.h"
 #include "base/compiler_specific.h"
-#include "base/cpu.h"
-#include "base/debug/alias.h"
 #include "base/immediate_crash.h"
-#include "base/logging.h"
-#include "base/memory/ref_counted.h"
-#include "base/memory/scoped_refptr.h"
-#include "base/no_destructor.h"
 #include "base/threading/platform_thread.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
@@ -64,13 +63,8 @@
 
 namespace partition_alloc::internal {
 
-namespace base {
-using ::base::MakeRefCounted;
-using ::base::RefCountedThreadSafe;
-}  // namespace base
-
 [[noreturn]] NOINLINE NOT_TAIL_CALLED void DoubleFreeAttempt() {
-  NO_CODE_FOLDING();
+  PA_NO_CODE_FOLDING();
   IMMEDIATE_CRASH();
 }
 
@@ -260,10 +254,7 @@ GetSlotStartInSuperPage(uintptr_t maybe_inner_address) {
   const uintptr_t slot_start = slot_span_start + (slot_number * slot_size);
   PA_SCAN_DCHECK(slot_start <= maybe_inner_address &&
                  maybe_inner_address < slot_start + slot_size);
-  GetSlotStartResult res;
-  res.slot_start = slot_start;
-  res.slot_size = slot_size;
-  return res;
+  return {.slot_start = slot_start, .slot_size = slot_size};
 }
 
 #if PA_SCAN_DCHECK_IS_ON()
@@ -347,13 +338,6 @@ class SuperPageSnapshot final {
   //
   // For systems with runtime-defined page size, assume partition page size is
   // at least 16kiB.
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-  static constexpr size_t kMinPartitionPageSize = 1 << 14;
-  static constexpr size_t kStateBitmapMinReservedSize =
-    partition_alloc::internal::base::bits::AlignUp(
-      sizeof(AllocationStateMap),
-      kMinPartitionPageSize);
-#else
   static constexpr size_t kMinPartitionPageSize =
       __builtin_constant_p(PartitionPageSize()) ? PartitionPageSize() : 1 << 14;
   static constexpr size_t kStateBitmapMinReservedSize =
@@ -362,7 +346,6 @@ class SuperPageSnapshot final {
           : partition_alloc::internal::base::bits::AlignUp(
                 sizeof(AllocationStateMap),
                 kMinPartitionPageSize);
-#endif
   // Take into account guard partition page at the end of super-page.
   static constexpr size_t kGuardPagesSize = 2 * kMinPartitionPageSize;
 
@@ -1194,7 +1177,7 @@ class PCScan::PCScanThread final {
 
   static PCScanThread& Instance() {
     // Lazily instantiate the scanning thread.
-    static base::NoDestructor<PCScanThread> instance;
+    static internal::base::NoDestructor<PCScanThread> instance;
     return *instance;
   }
 
@@ -1220,7 +1203,7 @@ class PCScan::PCScanThread final {
   }
 
  private:
-  friend class base::NoDestructor<PCScanThread>;
+  friend class internal::base::NoDestructor<PCScanThread>;
 
   PCScanThread() {
     ScopedAllowAllocations allow_allocations_within_std_thread;

@@ -627,16 +627,18 @@ class BASE_EXPORT TraceArguments {
   TraceArguments() : size_(0) {}
 
   // Constructor for a single argument.
-  template <typename T>
+  template <typename T, class = decltype(TraceValue::TypeCheck<T>::value)>
   TraceArguments(const char* arg1_name, T&& arg1_value) : size_(1) {
-    // types_[0] = TraceValue::TypeFor<T>::value;
+    types_[0] = TraceValue::TypeFor<T>::value;
     names_[0] = arg1_name;
     values_[0].Init(std::forward<T>(arg1_value));
   }
 
   // Constructor for two arguments.
   template <typename T1,
-            typename T2>
+            typename T2,
+            class = decltype(TraceValue::TypeCheck<T1>::value &&
+                             TraceValue::TypeCheck<T2>::value)>
   TraceArguments(const char* arg1_name,
                  T1&& arg1_value,
                  const char* arg2_name,

@@ -5,8 +5,6 @@
 #ifndef IPCZ_SRC_UTIL_STRONG_ALIAS_H_
 #define IPCZ_SRC_UTIL_STRONG_ALIAS_H_
 
-#include <iostream>
-
 namespace ipcz {
 
 // Type-safe alternative for C++ type aliases. This is derived from Chromium's

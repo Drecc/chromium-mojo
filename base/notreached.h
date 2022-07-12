@@ -7,6 +7,7 @@
 
 #include "base/base_export.h"
 #include "base/check.h"
+#include "base/dcheck_is_on.h"
 #include "base/logging_buildflags.h"
 
 namespace logging {
@@ -18,10 +19,6 @@ void BASE_EXPORT LogErrorNotReached(const char* file, int line);
        : EAT_CHECK_STREAM_PARAMS()
 #else
 #define NOTREACHED() DCHECK(false)
-#endif
-
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-#define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif
 
 // The NOTIMPLEMENTED() macro annotates codepaths which have not been

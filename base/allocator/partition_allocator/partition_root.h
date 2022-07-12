@@ -38,11 +38,11 @@
 #include "base/allocator/buildflags.h"
 #include "base/allocator/partition_allocator/address_pool_manager_types.h"
 #include "base/allocator/partition_allocator/allocation_guard.h"
-#include "base/allocator/partition_allocator/base/bits.h"
 #include "base/allocator/partition_allocator/page_allocator.h"
 #include "base/allocator/partition_allocator/page_allocator_constants.h"
 #include "base/allocator/partition_allocator/partition_address_space.h"
 #include "base/allocator/partition_allocator/partition_alloc-inl.h"
+#include "base/allocator/partition_allocator/partition_alloc_base/bits.h"
 #include "base/allocator/partition_allocator/partition_alloc_check.h"
 #include "base/allocator/partition_allocator/partition_alloc_config.h"
 #include "base/allocator/partition_allocator/partition_alloc_constants.h"
@@ -65,6 +65,7 @@
 #include "base/allocator/partition_allocator/thread_cache.h"
 #include "base/base_export.h"
 #include "base/compiler_specific.h"
+#include "base/dcheck_is_on.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
 #include "build/chromecast_buildflags.h"
@@ -137,7 +138,7 @@ struct PurgeFlags {
 // Options struct used to configure PartitionRoot and PartitionAllocator.
 struct PartitionOptions {
   enum class AlignedAlloc : uint8_t {
-    // By default all allocations will be aligned to `base::kAlignment`,
+    // By default all allocations will be aligned to `kAlignment`,
     // likely to be 8B or 16B depending on platforms and toolchains.
     // AlignedAlloc() allows to enforce higher alignment.
     // This option determines whether it is supported for the partition.
@@ -238,13 +239,9 @@ struct ALIGNAS(64) BASE_EXPORT PartitionRoot {
 
       // Defines whether the root should be scanned.
       ScanMode scan_mode;
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-      bool with_thread_cache;
-      bool with_denser_bucket_distribution;
-#else
+
       bool with_thread_cache = false;
       bool with_denser_bucket_distribution = false;
-#endif
 
       bool allow_aligned_alloc;
       bool allow_cookie;
@@ -982,10 +979,10 @@ ALWAYS_INLINE void PartitionAllocFreeForRefCounting(uintptr_t slot_start) {
 
   // memset() can be really expensive.
 #if EXPENSIVE_DCHECKS_ARE_ON()
-  memset(reinterpret_cast<void*>(slot_start), kFreedByte,
-         slot_span->GetUtilizedSlotSize()
+  DebugMemset(reinterpret_cast<void*>(slot_start), kFreedByte,
+              slot_span->GetUtilizedSlotSize()
 #if BUILDFLAG(PUT_REF_COUNT_IN_PREVIOUS_SLOT)
-             - sizeof(PartitionRefCount)
+                  - sizeof(PartitionRefCount)
 #endif
   );
 #endif
@@ -1260,10 +1257,10 @@ ALWAYS_INLINE void PartitionRoot<thread_safe>::FreeNoHooksImmediate(
 
   // memset() can be really expensive.
 #if EXPENSIVE_DCHECKS_ARE_ON()
-  memset(SlotStartAddr2Ptr(slot_start), internal::kFreedByte,
-         slot_span->GetUtilizedSlotSize()
+  internal::DebugMemset(SlotStartAddr2Ptr(slot_start), internal::kFreedByte,
+                        slot_span->GetUtilizedSlotSize()
 #if BUILDFLAG(PUT_REF_COUNT_IN_PREVIOUS_SLOT)
-             - sizeof(internal::PartitionRefCount)
+                            - sizeof(internal::PartitionRefCount)
 #endif
   );
 #elif defined(PA_ZERO_RANDOMLY_ON_FREE)
@@ -1330,9 +1327,7 @@ ALWAYS_INLINE void PartitionRoot<thread_safe>::RawFree(uintptr_t slot_start,
   // OS page. No need to write to the second one as well.
   //
   // Do not move the store above inside the locked section.
-#if !defined(COMPILER_MSVC) || defined(__clang__)
   __asm__ __volatile__("" : : "r"(slot_start) : "memory");
-#endif
 
   ::partition_alloc::internal::ScopedGuard guard{lock_};
   FreeInSlotSpan(slot_start, slot_span);
@@ -1800,7 +1795,7 @@ ALWAYS_INLINE void* PartitionRoot<thread_safe>::AllocWithFlagsNoHooks(
   if (LIKELY(!zero_fill)) {
     // memset() can be really expensive.
 #if EXPENSIVE_DCHECKS_ARE_ON()
-    memset(object, internal::kUninitializedByte, usable_size);
+    internal::DebugMemset(object, internal::kUninitializedByte, usable_size);
 #endif
   } else if (!is_already_zeroed) {
     memset(object, 0, usable_size);

@@ -12,7 +12,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "base/check_op.h"
+#include "base/dcheck_is_on.h"
 #include "base/metrics/histogram.h"
 #include "base/metrics/sparse_histogram.h"
 #include "base/time/time.h"
@@ -28,9 +28,9 @@ namespace internal {
 template <typename Enum, typename SFINAE = void>
 struct EnumSizeTraits {
   static constexpr Enum Count() {
-    // static_assert(
-    //     sizeof(Enum) == 0,
-    //     "enumerator must define kMaxValue enumerator to use this macro!");
+    static_assert(
+        sizeof(Enum) == 0,
+        "enumerator must define kMaxValue enumerator to use this macro!");
     return Enum();
   }
 };

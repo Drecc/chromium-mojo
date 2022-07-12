@@ -80,11 +80,7 @@ void SpinningMutex::AcquireSpinThenBlock() {
     // Also, loop several times here, following the guidelines in section 2.3.4
     // of the manual, "Pause latency in Skylake Client Microarchitecture".
     for (int yields = 0; yields < backoff; yields++) {
-#if defined(COMPILER_MSVC) && !defined(__clang__)
-      YieldProcessor();
-#else
       PA_YIELD_PROCESSOR;
-#endif
       tries++;
     }
     constexpr int kMaxBackoff = 16;
