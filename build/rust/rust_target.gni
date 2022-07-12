@@ -9,7 +9,7 @@ import("//build/rust/rust_unit_test.gni")
 # support cxx/autocxx bindings in such contexts, because
 # //third_party may be missing.
 if (build_with_chromium) {
-  import("//third_party/rust/autocxx/chromium_integration/rust_autocxx.gni")
+  # import("//third_party/rust/autocxx/chromium_integration/rust_autocxx.gni")
 }
 
 # Creates a Rust target (rlib, executable, proc macro etc.) with

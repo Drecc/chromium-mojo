@@ -25,11 +25,11 @@
 #include "mojo/core/ports/port_locker.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
-#if !BUILDFLAG(IS_NACL)
-#include "crypto/random.h"
-#else
+// #if !BUILDFLAG(IS_NACL)
+// #include "crypto/random.h"
+// #else
 #include "base/rand_util.h"
-#endif
+// #endif
 
 namespace mojo {
 namespace core {
@@ -58,11 +58,11 @@ class RandomNameGenerator {
   PortName GenerateRandomPortName() {
     base::AutoLock lock(lock_);
     if (cache_index_ == kRandomNameCacheSize) {
-#if BUILDFLAG(IS_NACL)
+// #if BUILDFLAG(IS_NACL)
       base::RandBytes(cache_, sizeof(PortName) * kRandomNameCacheSize);
-#else
-      crypto::RandBytes(cache_, sizeof(PortName) * kRandomNameCacheSize);
-#endif
+// #else
+//       crypto::RandBytes(cache_, sizeof(PortName) * kRandomNameCacheSize);
+// #endif
       cache_index_ = 0;
     }
     return cache_[cache_index_++];
@@ -598,7 +598,8 @@ int Node::MergePorts(const PortRef& port_ref,
                      const PortName& destination_port_name) {
   PortName new_port_name;
   Event::PortDescriptor new_port_descriptor;
-  PendingUpdatePreviousPeer pending_update_event{.from_port = port_ref.name()};
+  PendingUpdatePreviousPeer pending_update_event;
+  pending_update_event.from_port = port_ref.name();
   {
     // Must be held for ConvertToProxy.
     PortLocker::AssertNoPortsLockedOnCurrentThread();
@@ -1328,19 +1329,19 @@ int Node::MergePortsInternal(const PortRef& port0_ref,
     }
 
     pending_update_events[0] = {
-        .receiver = port0->peer_node_name,
-        .port = port0->peer_port_name,
-        .from_port = port0_ref.name(),
-        .sequence_num = port0->next_control_sequence_num_to_send++,
-        .new_prev_node = name_,
-        .new_prev_port = port1_ref.name()};
+        port0->peer_node_name,
+        port0->peer_port_name,
+        port0_ref.name(),
+        port0->next_control_sequence_num_to_send++,
+        name_,
+        port1_ref.name()};
     pending_update_events[1] = {
-        .receiver = port1->peer_node_name,
-        .port = port1->peer_port_name,
-        .from_port = port1_ref.name(),
-        .sequence_num = port1->next_control_sequence_num_to_send++,
-        .new_prev_node = name_,
-        .new_prev_port = port0_ref.name()};
+        port1->peer_node_name,
+        port1->peer_port_name,
+        port1_ref.name(),
+        port1->next_control_sequence_num_to_send++,
+        name_,
+        port0_ref.name()};
 
     // Swap the ports' peer information and switch them both to proxying mode.
     SwapPortPeers(port0_ref.name(), port0, port1_ref.name(), port1);
@@ -1620,8 +1621,8 @@ int Node::PrepareToForwardUserMessage(const PortRef& forwarding_port_ref,
         Event::PortDescriptor* port_descriptors = message->port_descriptors();
         for (size_t i = 0; i < message->num_ports(); ++i) {
           auto* port = locker.GetPort(attached_port_refs[i]);
-          PendingUpdatePreviousPeer update_event = {
-              .from_port = attached_port_refs[i].name()};
+          PendingUpdatePreviousPeer update_event;
+          update_event.from_port = attached_port_refs[i].name();
           ConvertToProxy(port, target_node_name, message->ports() + i,
                          port_descriptors + i, &update_event);
           peer_update_events.push(update_event);
@@ -1809,12 +1810,12 @@ void Node::TryRemoveProxy(const PortRef& port_ref) {
       }
       // Tell the peer_node to accept messages from prev_node from now.
       pending_update_event = {
-          .receiver = port->peer_node_name,
-          .port = port->peer_port_name,
-          .from_port = port_ref.name(),
-          .sequence_num = port->next_control_sequence_num_to_send++,
-          .new_prev_node = port->prev_node_name,
-          .new_prev_port = port->prev_port_name};
+          port->peer_node_name,
+          port->peer_port_name,
+          port_ref.name(),
+          port->next_control_sequence_num_to_send++,
+          port->prev_node_name,
+          port->prev_port_name};
     } else {
       DVLOG(2) << "Cannot remove port " << port_ref.name() << "@" << name_
                << " now; waiting for more messages";

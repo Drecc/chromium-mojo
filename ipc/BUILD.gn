@@ -95,7 +95,7 @@ component("ipc") {
     "//mojo/public/cpp/base",
     "//mojo/public/cpp/bindings",
     "//mojo/public/cpp/system",
-    "//services/tracing/public/cpp",
+    # "//services/tracing/public/cpp",
   ]
 
   deps = [ "//base" ]
@@ -168,7 +168,7 @@ component("message_support") {
   if (is_win || is_mac) {
     # On Windows HandleAttachmentWin needs to generate random IDs.
     # On Mac MachPortAttachmentMac needs to generate random IDs.
-    deps = [ "//crypto" ]
+    # deps = [ "//crypto" ]
   }
 }
 
@@ -293,14 +293,14 @@ if (!is_ios) {
       "//base",
       "//base:i18n",
       "//base/test:test_support",
-      "//crypto",
+      # "//crypto",
       "//mojo/core/test:test_support",
       "//testing/gtest",
       "//third_party/ipcz/src:ipcz_tests_sources_chromium",
     ]
 
     if (is_mac) {
-      deps += [ "//sandbox/mac:seatbelt" ]
+      # deps += [ "//sandbox/mac:seatbelt" ]
     }
   }
 

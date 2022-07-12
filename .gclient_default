@@ -1,7 +1,7 @@
 solutions = [
   {
     "name": "src",
-    "url": "https://github.com/Drecc/chromium-mojo.git@102.0.5005.78",
+    "url": "https://github.com/Drecc/chromium-mojo.git@103.0.5060.114",
     "managed": False,
     "custom_deps": {},
     "custom_vars": {},

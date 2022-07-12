@@ -39,7 +39,7 @@ component("ports") {
   public_deps = [ "//base" ]
 
   if (!is_nacl) {
-    deps = [ "//crypto" ]
+    # deps = [ "//crypto" ]
   }
 
   if (!is_debug && !optimize_for_size) {

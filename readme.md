@@ -1,6 +1,7 @@
 ### mojo && base
 This is a project spun off from chromium. you can use mojo and base outside of chromium projects.
-- stripped from chromium 102.0.5005.78
+- stripped from chromium 103.0.5060.114
+- is only verified to compile on windows and mac
 - windows support clang and msvc build
 ### how to build
 As you know, this project needs [depot\_tools](https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up) to compile, and make sure it's in your PATH.
@@ -9,7 +10,7 @@ As you know, this project needs [depot\_tools](https://commondatastorage.googlea
 mkdir chromium-mojo && cd chromium-mojo
 touch .gclient
 ```
-and then copy [.gclient_default](https://github.com/Drecc/chromium-mojo/blob/102.0.5005.78/.gclient_default) content to .gclient
+and then copy [.gclient_default](https://github.com/Drecc/chromium-mojo/blob/103.0.5060.114/.gclient_default) content to .gclient
 ```
 gclient sync
 ```

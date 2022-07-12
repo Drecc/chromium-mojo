@@ -45,7 +45,7 @@ group("run_perf_test") {
 
   data_deps = [
     ":test_scripts_shared",
-    "//third_party/catapult/tracing:convert_chart_json",
+    # "//third_party/catapult/tracing:convert_chart_json",
   ]
 
   if (is_android) {
