@@ -193,6 +193,8 @@ ALWAYS_INLINE constexpr
 }
 
 #define BASE_BITOPS_CONSTEXPR constexpr
+#define Log2Floor Log2FloorMSVC
+#define Log2Ceiling Log2CeilingMSVC
 
 #endif
 
@@ -215,7 +217,7 @@ CountTrailingZeroBitsSizeT(size_t x) {
   return CountTrailingZeroBits(x);
 }
 
-#undef BASE_BITOPS_CONSTEXPR
+// #undef BASE_BITOPS_CONSTEXPR
 
 // Returns the integer i such as 2^i <= n < 2^(i+1).
 //
@@ -224,17 +226,19 @@ CountTrailingZeroBitsSizeT(size_t x) {
 // use `Log2Floor` and add 1 to the result.
 //
 // TODO(pkasting): When C++20 is available, replace with std::bit_xxx().
-constexpr int Log2Floor(uint32_t n) {
+BASE_BITOPS_CONSTEXPR int Log2Floor(uint32_t n) {
   return 31 - CountLeadingZeroBits(n);
 }
 
 // Returns the integer i such as 2^(i-1) < n <= 2^i.
-constexpr int Log2Ceiling(uint32_t n) {
+BASE_BITOPS_CONSTEXPR int Log2Ceiling(uint32_t n) {
   // When n == 0, we want the function to return -1.
   // When n == 0, (n - 1) will underflow to 0xFFFFFFFF, which is
   // why the statement below starts with (n ? 32 : -1).
   return (n ? 32 : -1) - CountLeadingZeroBits(n - 1);
 }
+
+#undef BASE_BITOPS_CONSTEXPR
 
 // Returns a value of type T with a single bit set in the left-most position.
 // Can be used instead of manually shifting a 1 to the left.

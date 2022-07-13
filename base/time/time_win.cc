@@ -405,6 +405,14 @@ DWORD (*g_tick_function)(void) = &timeGetTimeWrapper;
 // A structure holding the most significant bits of "last seen" and a
 // "rollover" counter.
 union LastTimeAndRolloversState {
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  LastTimeAndRolloversState() {
+
+  };
+  LastTimeAndRolloversState(const LastTimeAndRolloversState&other) {
+
+  };
+#endif
   // The state as a single 32-bit opaque value.
   std::atomic<int32_t> as_opaque_32;
 

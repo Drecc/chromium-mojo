@@ -7,7 +7,7 @@
 
 #include "build/build_config.h"
 
-#if defined(OFFICIAL_BUILD)
+#if defined(OFFICIAL_BUILD) || (defined(COMPILER_MSVC) && !defined(__clang__))
 // The annotation changed compiler output and increased binary size so disable
 // for official builds.
 // TODO(crbug.com/1320670): Remove when issue is resolved.

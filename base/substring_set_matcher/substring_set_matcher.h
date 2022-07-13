@@ -259,6 +259,9 @@ class BASE_EXPORT SubstringSetMatcher {
     // need to access that label during every single node we look at during
     // traversal.
     static constexpr int kNumInlineEdges = 2;
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+#pragma pack(push,1)
+#endif
     union {
       // Out-of-line edge storage, having room for edges_capacity_ elements.
       // Note that due to __attribute__((packed)) below, this pointer may be
@@ -291,7 +294,12 @@ class BASE_EXPORT SubstringSetMatcher {
     // If not equal to zero, will be a multiple of 4, so that we can use
     // SIMD to accelerate looking for edges.
     uint16_t edges_capacity_ = 0;
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  };
+#pragma pack(pop)
+#else
   } __attribute__((packed));
+#endif
 
   using SubstringPatternVector = std::vector<const StringPattern*>;
 

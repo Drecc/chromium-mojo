@@ -564,10 +564,17 @@ ALWAYS_INLINE SlotSpanMetadata<thread_safe>*
 PartitionBucket<thread_safe>::AllocNewSlotSpan(PartitionRoot<thread_safe>* root,
                                                int flags,
                                                size_t slot_span_alignment) {
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  PA_DCHECK(!(static_cast<uintptr_t>(root->next_partition_page) %
+              PartitionPageSize()));
+  PA_DCHECK(!(static_cast<uintptr_t>(root->next_partition_page_end) %
+              PartitionPageSize()));
+#else
   PA_DCHECK(!(reinterpret_cast<uintptr_t>(root->next_partition_page) %
               PartitionPageSize()));
   PA_DCHECK(!(reinterpret_cast<uintptr_t>(root->next_partition_page_end) %
               PartitionPageSize()));
+#endif
 
   size_t num_partition_pages = get_pages_per_slot_span();
   size_t slot_span_reservation_size = num_partition_pages

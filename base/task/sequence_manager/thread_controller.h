@@ -222,8 +222,8 @@ class ThreadController {
 
       // Moveable for STL compat. Marks |other| as idle so it noops on
       // destruction after handing off its responsibility.
-      RunLevel(RunLevel&& other);
-      RunLevel& operator=(RunLevel&& other);
+      // RunLevel(RunLevel&& other);
+      // RunLevel& operator=(RunLevel&& other);
 
       void UpdateState(State new_state);
 
@@ -231,10 +231,10 @@ class ThreadController {
 
      private:
       State state_ = kIdle;
-      bool is_nested_;
+      // bool is_nested_;
 
-      SampleMetadata thread_controller_sample_metadata_;
-      size_t thread_controller_active_id_ = 0;
+      // SampleMetadata thread_controller_sample_metadata_;
+      // size_t thread_controller_active_id_ = 0;
     };
 
     std::stack<RunLevel, std::vector<RunLevel>> run_levels_;

@@ -194,7 +194,8 @@ template("msvc_toolchain") {
       # clang header updates happen via changing command line flags.
       show_includes = "/showIncludes:user"
     } else {
-      show_includes = "/showIncludes"
+      # show_includes = "/showIncludes"
+      show_includes = ""
     }
 
     tool("cc") {

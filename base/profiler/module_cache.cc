@@ -41,7 +41,8 @@ const ModuleCache::Module* ModuleCache::GetModuleForAddress(uintptr_t address) {
   if (const ModuleCache::Module* module = GetExistingModuleForAddress(address))
     return module;
 
-  std::unique_ptr<const Module> new_module = CreateModuleForAddress(address);
+  std::shared_ptr<const Module> new_module;
+  new_module.reset(std::move(CreateModuleForAddress(address)).release());
   if (!new_module && auxiliary_module_provider_)
     new_module = auxiliary_module_provider_->TryCreateModuleForAddress(address);
   if (!new_module)
@@ -56,9 +57,9 @@ const ModuleCache::Module* ModuleCache::GetModuleForAddress(uintptr_t address) {
 std::vector<const ModuleCache::Module*> ModuleCache::GetModules() const {
   std::vector<const Module*> result;
   result.reserve(native_modules_.size());
-  for (const std::unique_ptr<const Module>& module : native_modules_)
+  for (const std::shared_ptr<const Module>& module : native_modules_)
     result.push_back(module.get());
-  for (const std::unique_ptr<const Module>& module : non_native_modules_)
+  for (const std::shared_ptr<const Module>& module : non_native_modules_)
     result.push_back(module.get());
   return result;
 }
@@ -79,7 +80,7 @@ void ModuleCache::UpdateNonNativeModules(
   // and r is the number of modules to remove. insert and erase are both O(r).
   auto first_module_defunct_modules = ranges::stable_partition(
       non_native_modules_,
-      [&defunct_modules_set](const std::unique_ptr<const Module>& module) {
+      [&defunct_modules_set](const std::shared_ptr<const Module>& module) {
         return defunct_modules_set.find(module.get()) ==
                defunct_modules_set.end();
       });
@@ -98,8 +99,13 @@ void ModuleCache::UpdateNonNativeModules(
   // where m is the number of current modules and a is the number of modules to
   // be added.
   const size_t prior_non_native_modules_size = non_native_modules_.size();
-  non_native_modules_.insert(std::make_move_iterator(new_modules.begin()),
-                             std::make_move_iterator(new_modules.end()));
+  for (std::unique_ptr<const Module>& module : new_modules) {
+    std::shared_ptr<const Module> temp;
+    temp.reset(std::move(module).release());
+    non_native_modules_.insert(std::move(temp));
+  }
+  // non_native_modules_.insert(std::make_move_iterator(new_modules.begin()),
+  //                            std::make_move_iterator(new_modules.end()));
   // Every module in |new_modules| should have been moved into
   // |non_native_modules_|. This guards against use-after-frees if |new_modules|
   // were to contain any modules equivalent to what's already in
@@ -112,7 +118,9 @@ void ModuleCache::UpdateNonNativeModules(
 }
 
 void ModuleCache::AddCustomNativeModule(std::unique_ptr<const Module> module) {
-  const bool was_inserted = native_modules_.insert(std::move(module)).second;
+  std::shared_ptr<const Module> temp;
+  temp.reset(std::move(module).release());
+  const bool was_inserted = native_modules_.insert(std::move(temp)).second;
   // |module| should have been inserted into |native_modules_|, indicating that
   // there was no equivalent module already present. While this scenario would
   // be a violation of the API contract, it would present a
@@ -146,20 +154,20 @@ void ModuleCache::UnregisterAuxiliaryModuleProvider(
 }
 
 bool ModuleCache::ModuleAndAddressCompare::operator()(
-    const std::unique_ptr<const Module>& m1,
-    const std::unique_ptr<const Module>& m2) const {
+    const std::shared_ptr<const Module>& m1,
+    const std::shared_ptr<const Module>& m2) const {
   return m1->GetBaseAddress() < m2->GetBaseAddress();
 }
 
 bool ModuleCache::ModuleAndAddressCompare::operator()(
-    const std::unique_ptr<const Module>& m1,
+    const std::shared_ptr<const Module>& m1,
     uintptr_t address) const {
   return m1->GetBaseAddress() + m1->GetSize() <= address;
 }
 
 bool ModuleCache::ModuleAndAddressCompare::operator()(
     uintptr_t address,
-    const std::unique_ptr<const Module>& m2) const {
+    const std::shared_ptr<const Module>& m2) const {
   return address < m2->GetBaseAddress();
 }
 

@@ -180,6 +180,7 @@ ALWAYS_INLINE uintptr_t GetDirectMapReservationStart(uintptr_t address) {
   // Make sure the reservation start is in the same pool as |address|.
   // In the 32-bit mode, the beginning of a reservation may be excluded from the
   // BRP pool, so shift the pointer. The other pools don't have this logic.
+#if !defined(COMPILER_MSVC) || defined(__clang__)
   PA_DCHECK(is_in_brp_pool ==
             IsManagedByPartitionAllocBRPPool(
                 reservation_start
@@ -188,6 +189,7 @@ ALWAYS_INLINE uintptr_t GetDirectMapReservationStart(uintptr_t address) {
                       AddressPoolManagerBitmap::kGuardOffsetOfBRPPoolBitmap
 #endif  // !defined(PA_HAS_64_BITS_POINTERS)
                 ));
+#endif
   PA_DCHECK(is_in_regular_pool ==
             IsManagedByPartitionAllocRegularPool(reservation_start));
   PA_DCHECK(*ReservationOffsetPointer(reservation_start) == 0);

@@ -9,7 +9,7 @@
 #include <windows.h>
 #include <winternl.h>
 
-using GetLastNtStatusFn = NTSTATUS NTAPI (*)();
+using GetLastNtStatusFn = NTSTATUS (WINAPI*)();
 
 constexpr const wchar_t kNtDllName[] = L"ntdll.dll";
 constexpr const char kLastStatusFnName[] = "RtlGetLastNtStatus";

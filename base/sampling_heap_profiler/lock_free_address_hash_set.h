@@ -44,6 +44,10 @@ namespace base {
 class BASE_EXPORT LockFreeAddressHashSet {
  public:
   explicit LockFreeAddressHashSet(size_t buckets_count);
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  LockFreeAddressHashSet(const LockFreeAddressHashSet&) : bucket_mask_(0) {
+  }
+#endif
   ~LockFreeAddressHashSet();
 
   // Checks if the |key| is in the set. Can be executed concurrently with
@@ -76,6 +80,7 @@ class BASE_EXPORT LockFreeAddressHashSet {
 
   struct Node {
     ALWAYS_INLINE Node(void* key, Node* next);
+    ALWAYS_INLINE Node(const Node&);
     std::atomic<void*> key;
     Node* next;
   };

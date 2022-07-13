@@ -148,12 +148,12 @@ class BASE_EXPORT ModuleCache {
   // using containers.
   struct ModuleAndAddressCompare {
     using is_transparent = void;
-    bool operator()(const std::unique_ptr<const Module>& m1,
-                    const std::unique_ptr<const Module>& m2) const;
-    bool operator()(const std::unique_ptr<const Module>& m1,
+    bool operator()(const std::shared_ptr<const Module>& m1,
+                    const std::shared_ptr<const Module>& m2) const;
+    bool operator()(const std::shared_ptr<const Module>& m1,
                     uintptr_t address) const;
     bool operator()(uintptr_t address,
-                    const std::unique_ptr<const Module>& m2) const;
+                    const std::shared_ptr<const Module>& m2) const;
   };
 
   // Creates a Module object for the specified memory address. Returns null if
@@ -164,7 +164,7 @@ class BASE_EXPORT ModuleCache {
   // Set of native modules sorted by base address. We use set rather than
   // flat_set because the latter type has O(n^2) runtime for adding modules
   // one-at-a-time, which is how modules are added on Windows and Mac.
-  std::set<std::unique_ptr<const Module>, ModuleAndAddressCompare>
+  std::set<std::shared_ptr<const Module>, ModuleAndAddressCompare>
       native_modules_;
 
   // Set of non-native modules currently mapped into the address space, sorted
@@ -175,7 +175,7 @@ class BASE_EXPORT ModuleCache {
   // reasonably well with the flat_set complexity guarantees. Separate from
   // native_modules_ to support preferential lookup of non-native modules
   // embedded in native modules; see comment on UpdateNonNativeModules().
-  base::flat_set<std::unique_ptr<const Module>, ModuleAndAddressCompare>
+  base::flat_set<std::shared_ptr<const Module>, ModuleAndAddressCompare>
       non_native_modules_;
 
   // Unsorted vector of inactive non-native modules. Inactive modules are no
@@ -184,7 +184,7 @@ class BASE_EXPORT ModuleCache {
   // remain valid. Note that this cannot be represented as a set/flat_set
   // because it can contain multiple modules that were loaded (then subsequently
   // unloaded) at the same base address.
-  std::vector<std::unique_ptr<const Module>> inactive_non_native_modules_;
+  std::vector<std::shared_ptr<const Module>> inactive_non_native_modules_;
 
   // Auxiliary module provider, for lazily creating native modules.
   raw_ptr<AuxiliaryModuleProvider> auxiliary_module_provider_ = nullptr;

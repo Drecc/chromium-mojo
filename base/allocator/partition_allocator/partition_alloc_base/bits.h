@@ -152,11 +152,19 @@ ALWAYS_INLINE
 #endif
 }
 
+#if defined(COMPILER_MSVC) && !defined(__clang__)
 ALWAYS_INLINE uint32_t CountLeadingZeroBits32(uint32_t x) {
+#else
+ALWAYS_INLINE constexpr uint32_t CountLeadingZeroBits32(uint32_t x) {
+#endif
   return CountLeadingZeroBits(x);
 }
 
+#if defined(COMPILER_MSVC) && !defined(__clang__)
 ALWAYS_INLINE uint64_t CountLeadingZeroBits64(uint64_t x) {
+#else
+ALWAYS_INLINE constexpr uint64_t CountLeadingZeroBits64(uint64_t x) {
+#endif
   return CountLeadingZeroBits(x);
 }
 
@@ -200,11 +208,19 @@ ALWAYS_INLINE constexpr uint64_t CountLeadingZeroBits64(uint64_t x) {
 
 #endif
 
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+ALWAYS_INLINE size_t CountLeadingZeroBitsSizeT(size_t x) {
+#else
 ALWAYS_INLINE constexpr size_t CountLeadingZeroBitsSizeT(size_t x) {
+#endif
   return CountLeadingZeroBits(x);
 }
 
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+ALWAYS_INLINE size_t CountTrailingZeroBitsSizeT(size_t x) {
+#else
 ALWAYS_INLINE constexpr size_t CountTrailingZeroBitsSizeT(size_t x) {
+#endif
   return CountTrailingZeroBits(x);
 }
 
@@ -213,12 +229,20 @@ ALWAYS_INLINE constexpr size_t CountTrailingZeroBitsSizeT(size_t x) {
 // There is a common `BitLength` function, which returns the number of bits
 // required to represent a value. Rather than implement that function,
 // use `Log2Floor` and add 1 to the result.
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+ALWAYS_INLINE int Log2Floor(uint32_t n) {
+#else
 constexpr int Log2Floor(uint32_t n) {
+#endif
   return 31 - CountLeadingZeroBits(n);
 }
 
 // Returns the integer i such as 2^(i-1) < n <= 2^i.
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+ALWAYS_INLINE int Log2Ceiling(uint32_t n) {
+#else
 constexpr int Log2Ceiling(uint32_t n) {
+#endif
   // When n == 0, we want the function to return -1.
   // When n == 0, (n - 1) will underflow to 0xFFFFFFFF, which is
   // why the statement below starts with (n ? 32 : -1).

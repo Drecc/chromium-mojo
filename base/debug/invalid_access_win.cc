@@ -29,6 +29,7 @@ static constexpr int kNopInstructionSize = 4;
 #endif
 
 // Function that can be jumped midway into safely.
+#if !defined(COMPILER_MSVC) || defined(__clang__)
 __attribute__((naked)) int nop_sled() {
   asm("nop\n"
       "nop\n"
@@ -41,6 +42,8 @@ void IndirectCall(FuncType* func) {
   // This code always generates CFG guards.
   (*func)();
 }
+
+#endif
 
 void CreateSyntheticHeapCorruption() {
   EXCEPTION_RECORD record = {};
@@ -79,6 +82,7 @@ void TerminateWithHeapCorruption() {
 
 void TerminateWithControlFlowViolation() {
   // Call into the middle of the NOP sled.
+#if !defined(COMPILER_MSVC) || defined(__clang__)
   FuncType func = reinterpret_cast<FuncType>(
       (reinterpret_cast<uintptr_t>(nop_sled)) + kNopInstructionSize);
   __try {
@@ -88,6 +92,7 @@ void TerminateWithControlFlowViolation() {
     // CFG fast fail should never be caught.
     CHECK(false);
   }
+#endif
   // Should only reach here if CFG is disabled.
   abort();
 }

@@ -55,9 +55,11 @@ class VoidifyStream {
 #define LAZY_CHECK_STREAM(stream, condition) \
   !(condition) ? (void)0 : ::logging::VoidifyStream() & (stream)
 
+#define EAT_CHECK_STREAM_PARAMS_EXPAND_(x) x
+
 // Macro which uses but does not evaluate expr and any stream parameters.
 #define EAT_CHECK_STREAM_PARAMS(expr) \
-  true ? (void)0                      \
+  true ? ((void)0)                      \
        : ::logging::VoidifyStream(expr) & (*::logging::g_swallow_stream)
 BASE_EXPORT extern std::ostream* g_swallow_stream;
 

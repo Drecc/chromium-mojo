@@ -479,7 +479,8 @@ TEST(ChannelTest, PeerStressTest) {
 
   // Send a lot of messages, followed by a final terminating message.
   auto send_lots_of_messages = [](scoped_refptr<Channel> channel) {
-    for (size_t i = 0; i < kLotsOfMessages; ++i) {
+    constexpr size_t kLotsOfMessages_copy = 1024;
+    for (size_t i = 0; i < kLotsOfMessages_copy; ++i) {
       channel->Write(Channel::Message::CreateMessage(0, 0));
     }
   };

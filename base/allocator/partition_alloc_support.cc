@@ -59,7 +59,11 @@ constexpr const char* ScannerIdToTracingString(
     case internal::StatsCollector::ScannerId::kOverall:
       return "PCScan.Scanner";
     case internal::StatsCollector::ScannerId::kNumIds:
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+      __assume(false);
+#else
       __builtin_unreachable();
+#endif
   }
 }
 
@@ -75,7 +79,11 @@ constexpr const char* MutatorIdToTracingString(
     case internal::StatsCollector::MutatorId::kOverall:
       return "PCScan.Mutator";
     case internal::StatsCollector::MutatorId::kNumIds:
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+      __assume(false);
+#else
       __builtin_unreachable();
+#endif
   }
 }
 #endif  // BUILDFLAG(ENABLE_BASE_TRACING)
