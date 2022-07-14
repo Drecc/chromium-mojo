@@ -7,14 +7,14 @@
 #include <stdint.h>
 
 #include <limits>
-
-#include "base/trace_event/memory_dump_manager.h"
+#include <map>
 
 namespace mojo {
 namespace core {
 
 namespace {
 
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 const char* GetNameForDispatcherType(Dispatcher::Type type) {
   switch (type) {
     case Dispatcher::Type::UNKNOWN:
@@ -34,9 +34,10 @@ const char* GetNameForDispatcherType(Dispatcher::Type type) {
     case Dispatcher::Type::INVITATION:
       return "invitation";
   }
-  NOTREACHED();
+  // NOTREACHED();
   return "unknown";
 }
+#endif
 
 }  // namespace
 
@@ -185,6 +186,7 @@ bool HandleTable::OnMemoryDump(const base::trace_event::MemoryDumpArgs& args,
     }
   }
 
+#if BUILDFLAG(ENABLE_BASE_TRACING)
   for (const auto& entry : handle_count) {
     base::trace_event::MemoryAllocatorDump* inner_dump =
         pmd->CreateAllocatorDump(std::string("mojo/") +
@@ -193,6 +195,7 @@ bool HandleTable::OnMemoryDump(const base::trace_event::MemoryDumpArgs& args,
         base::trace_event::MemoryAllocatorDump::kNameObjectCount,
         base::trace_event::MemoryAllocatorDump::kUnitsObjects, entry.second);
   }
+#endif
 
   return true;
 }

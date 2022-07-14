@@ -13,7 +13,7 @@
 #include "base/logging.h"
 #include "base/memory/ref_counted.h"
 #include "base/numerics/checked_math.h"
-#include "base/trace_event/trace_event.h"
+// #include "base/trace_event/trace_event.h"
 #include "mojo/core/configuration.h"
 #include "mojo/core/core.h"
 #include "mojo/core/data_pipe_control_message.h"
@@ -528,8 +528,8 @@ void DataPipeProducerDispatcher::UpdateSignalsStateNoLock() {
           break;
         }
 
-        TRACE_EVENT0("ipc",
-                     "DataPipeProducerDispatcher received DATA_WAS_READ");
+        // TRACE_EVENT0("ipc",
+        //              "DataPipeProducerDispatcher received DATA_WAS_READ");
 
         uint32_t new_available_capacity;
         if (!base::CheckAdd(available_capacity_, m->num_bytes)

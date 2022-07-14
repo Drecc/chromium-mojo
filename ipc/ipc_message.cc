@@ -19,7 +19,8 @@
 
 #include "base/atomic_sequence_num.h"
 #include "base/logging.h"
-#include "base/trace_event/trace_event.h"
+#include "base/process/process_handle.h"
+// #include "base/trace_event/trace_event.h"
 #include "build/build_config.h"
 #include "ipc/ipc_message_attachment.h"
 #include "ipc/ipc_message_attachment_set.h"
@@ -37,10 +38,11 @@ base::AtomicSequenceNumber g_ref_num;
 // values has the reference number stored in the upper 24 bits, leaving the low
 // 8 bits set to 0 for use as flags.
 inline uint32_t GetRefNumUpper24() {
-  base::trace_event::TraceLog* trace_log =
-      base::trace_event::TraceLog::GetInstance();
-  uint32_t pid = trace_log ? trace_log->process_id() : 0;
+  // base::trace_event::TraceLog* trace_log =
+  //     base::trace_event::TraceLog::GetInstance();
+  // uint32_t pid = trace_log ? trace_log->process_id() : 0;
   uint32_t count = g_ref_num.GetNext();
+  auto pid = base::GetCurrentProcId();
   // The 24 bit hash is composed of 14 bits of the count and 10 bits of the
   // Process ID. With the current trace event buffer cap, the 14-bit count did
   // not appear to wrap during a trace. Note that it is not a big deal if

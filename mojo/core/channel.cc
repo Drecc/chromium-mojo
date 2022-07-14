@@ -17,7 +17,7 @@
 #include "base/memory/raw_ptr.h"
 #include "base/numerics/safe_math.h"
 #include "base/process/process_handle.h"
-#include "base/trace_event/typed_macros.h"
+#include "base/trace_event/base_tracing.h"
 #include "build/build_config.h"
 #include "mojo/core/configuration.h"
 #include "mojo/core/core.h"

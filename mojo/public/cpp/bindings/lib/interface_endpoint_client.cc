@@ -19,7 +19,7 @@
 #include "base/synchronization/waitable_event.h"
 #include "base/task/bind_post_task.h"
 #include "base/task/sequenced_task_runner.h"
-#include "base/trace_event/typed_macros.h"
+#include "base/trace_event/base_tracing.h"
 #include "mojo/public/cpp/bindings/associated_group.h"
 #include "mojo/public/cpp/bindings/associated_group_controller.h"
 #include "mojo/public/cpp/bindings/interface_endpoint_controller.h"
@@ -28,7 +28,10 @@
 #include "mojo/public/cpp/bindings/sync_call_restrictions.h"
 #include "mojo/public/cpp/bindings/sync_event_watcher.h"
 #include "mojo/public/cpp/bindings/thread_safe_proxy.h"
+
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 #include "third_party/perfetto/protos/perfetto/trace/track_event/chrome_mojo_event_info.pbzero.h"
+#endif
 
 namespace mojo {
 
@@ -841,6 +844,7 @@ void InterfaceEndpointClient::OnAssociationEvent(
 }
 
 bool InterfaceEndpointClient::HandleValidatedMessage(Message* message) {
+#if BUILDFLAG(ENABLE_BASE_TRACING)
   TRACE_EVENT("toplevel",
               perfetto::StaticString{method_name_callback_(*message)},
               [&](perfetto::EventContext& ctx) {
@@ -855,6 +859,7 @@ bool InterfaceEndpointClient::HandleValidatedMessage(Message* message) {
 
                 perfetto::Flow::Global(message->GetTraceId())(ctx);
               });
+#endif
 
   DCHECK_EQ(handle_.id(), message->interface_id());
 

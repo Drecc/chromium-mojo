@@ -23,8 +23,7 @@
 #include "base/synchronization/lock.h"
 #include "base/task/current_thread.h"
 #include "base/threading/sequence_local_storage_slot.h"
-#include "base/trace_event/trace_event.h"
-#include "base/trace_event/typed_macros.h"
+#include "base/trace_event/base_tracing.h"
 #include "mojo/public/c/system/quota.h"
 #include "mojo/public/cpp/bindings/features.h"
 #include "mojo/public/cpp/bindings/lib/may_auto_lock.h"
@@ -33,7 +32,10 @@
 #include "mojo/public/cpp/bindings/sync_handle_watcher.h"
 #include "mojo/public/cpp/bindings/tracing_helpers.h"
 #include "mojo/public/cpp/system/wait.h"
+
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 #include "third_party/perfetto/protos/perfetto/trace/track_event/chrome_mojo_event_info.pbzero.h"
+#endif
 
 #if defined(ENABLE_IPC_FUZZER)
 #include "mojo/public/cpp/bindings/message_dumper.h"
@@ -541,6 +543,7 @@ bool Connector::DispatchMessage(ScopedMessageHandle handle) {
   // purposes.
   // TODO(altimin): This event is temporarily kept as a debug fallback. Remove
   // it once the new implementation proves to be stable.
+#if BUILDFLAG(ENABLE_BASE_TRACING)
   TRACE_EVENT(
       TRACE_DISABLED_BY_DEFAULT("mojom"), "Connector::DispatchMessage",
       [&](perfetto::EventContext& ctx) {
@@ -554,6 +557,7 @@ bool Connector::DispatchMessage(ScopedMessageHandle handle) {
 
         perfetto::Flow::Global(message.GetTraceId())(ctx);
       });
+#endif
 
   if (connection_group_)
     message.set_receiver_connection_group(&connection_group_);

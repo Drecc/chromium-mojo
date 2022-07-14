@@ -7,15 +7,21 @@
 #include <memory>
 
 #include "base/synchronization/lock.h"
+#include "base/trace_event/base_tracing.h"
+
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 #include "base/trace_event/memory_allocator_dump.h"
 #include "base/trace_event/memory_dump_request_args.h"
 #include "base/trace_event/process_memory_dump.h"
-#include "base/trace_event/traced_value.h"
+#endif
+
 #include "mojo/core/dispatcher.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 using base::trace_event::MemoryAllocatorDump;
+#endif
 using testing::Contains;
 using testing::Eq;
 using testing::Contains;
@@ -41,6 +47,7 @@ class FakeMessagePipeDispatcher : public Dispatcher {
   ~FakeMessagePipeDispatcher() override = default;
 };
 
+#if BUILDFLAG(ENABLE_BASE_TRACING)
 void CheckNameAndValue(base::trace_event::ProcessMemoryDump* pmd,
                        const std::string& name,
                        uint64_t value) {
@@ -51,6 +58,7 @@ void CheckNameAndValue(base::trace_event::ProcessMemoryDump* pmd,
       "object_count", MemoryAllocatorDump::kUnitsObjects, value);
   EXPECT_THAT(mad->entries(), Contains(Eq(ByRef(expected))));
 }
+#endif
 
 }  // namespace
 
@@ -63,6 +71,7 @@ TEST(HandleTableTest, OnMemoryDump) {
     ht.AddDispatcher(dispatcher);
   }
 
+#if BUILDFLAG(ENABLE_BASE_TRACING)
   base::trace_event::MemoryDumpArgs args = {
       base::trace_event::MemoryDumpLevelOfDetail::DETAILED};
   base::trace_event::ProcessMemoryDump pmd(args);
@@ -70,6 +79,8 @@ TEST(HandleTableTest, OnMemoryDump) {
 
   CheckNameAndValue(&pmd, "mojo/message_pipe", 1);
   CheckNameAndValue(&pmd, "mojo/data_pipe_consumer", 0);
+#endif
+
 }
 
 }  // namespace core

@@ -7,7 +7,7 @@
 #include <cstring>
 #include <tuple>
 
-#include "base/trace_event/typed_macros.h"
+#include "base/trace_event/base_tracing.h"
 
 namespace mojo {
 namespace internal {

@@ -13,10 +13,7 @@
 #include "base/no_destructor.h"
 #include "base/numerics/safe_conversions.h"
 #include "base/numerics/safe_math.h"
-#include "base/trace_event/memory_allocator_dump.h"
-#include "base/trace_event/memory_dump_manager.h"
-#include "base/trace_event/memory_dump_provider.h"
-#include "base/trace_event/trace_event.h"
+#include "base/trace_event/base_tracing.h"
 #include "mojo/core/configuration.h"
 #include "mojo/core/core.h"
 #include "mojo/core/node_channel.h"
@@ -280,8 +277,10 @@ void DecrementMessageCount() {
 class MessageMemoryDumpProvider : public base::trace_event::MemoryDumpProvider {
  public:
   MessageMemoryDumpProvider() {
+#if BUILDFLAG(ENABLE_BASE_TRACING)
     base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
         this, "MojoMessages", nullptr);
+#endif
   }
 
   MessageMemoryDumpProvider(const MessageMemoryDumpProvider&) = delete;
@@ -289,19 +288,23 @@ class MessageMemoryDumpProvider : public base::trace_event::MemoryDumpProvider {
       delete;
 
   ~MessageMemoryDumpProvider() override {
+#if BUILDFLAG(ENABLE_BASE_TRACING)
     base::trace_event::MemoryDumpManager::GetInstance()->UnregisterDumpProvider(
         this);
+#endif
   }
 
  private:
   // base::trace_event::MemoryDumpProvider:
   bool OnMemoryDump(const base::trace_event::MemoryDumpArgs& args,
                     base::trace_event::ProcessMemoryDump* pmd) override {
+#if BUILDFLAG(ENABLE_BASE_TRACING)
     auto* dump = pmd->CreateAllocatorDump("mojo/messages");
     dump->AddScalar(base::trace_event::MemoryAllocatorDump::kNameObjectCount,
                     base::trace_event::MemoryAllocatorDump::kUnitsObjects,
                     g_message_count.load(std::memory_order_relaxed));
-    return true;
+#endif
+  return true;
   }
 };
 

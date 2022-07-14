@@ -5,7 +5,7 @@
 #include "mojo/public/cpp/bindings/generic_pending_receiver.h"
 
 #include "base/strings/string_piece.h"
-#include "base/trace_event/trace_event.h"
+#include "base/trace_event/base_tracing.h"
 
 namespace mojo {
 

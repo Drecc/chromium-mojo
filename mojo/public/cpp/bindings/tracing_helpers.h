@@ -5,7 +5,7 @@
 #ifndef MOJO_PUBLIC_CPP_BINDINGS_TRACING_HELPERS_H_
 #define MOJO_PUBLIC_CPP_BINDINGS_TRACING_HELPERS_H_
 
-#include "base/trace_event/trace_event.h"
+#include "base/trace_event/base_tracing_forward.h"
 #include "build/buildflag.h"
 #include "mojo/public/cpp/bindings/message.h"
 #include "mojo/public/cpp/bindings/mojo_buildflags.h"

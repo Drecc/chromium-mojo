@@ -9,10 +9,10 @@
 
 #include "base/component_export.h"
 #include "base/strings/string_piece.h"
+#include "base/trace_event/base_tracing_forward.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/system/message_pipe.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/perfetto/include/perfetto/tracing/traced_value_forward.h"
 
 namespace mojo {
 

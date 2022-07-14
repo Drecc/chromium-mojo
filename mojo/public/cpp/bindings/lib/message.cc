@@ -17,11 +17,11 @@
 #include "base/check_op.h"
 #include "base/lazy_instance.h"
 #include "base/memory/ptr_util.h"
+#include "base/atomic_sequence_num.h"
+#include "base/rand_util.h"
 #include "base/numerics/safe_math.h"
 #include "base/threading/sequence_local_storage_slot.h"
-#include "base/trace_event/trace_event.h"
-#include "base/trace_event/trace_id_helper.h"
-#include "base/trace_event/typed_macros.h"
+#include "base/trace_event/base_tracing.h"
 #include "mojo/public/cpp/bindings/associated_group_controller.h"
 #include "mojo/public/cpp/bindings/lib/array_internal.h"
 #include "mojo/public/cpp/bindings/lib/message_fragment.h"
@@ -30,6 +30,12 @@
 namespace mojo {
 
 namespace {
+
+uint64_t GetNextGlobalTraceId() {
+  static const uint64_t kPerProcessRandomValue = base::RandUint64();
+  static base::AtomicSequenceNumber counter;
+  return kPerProcessRandomValue ^ counter.GetNext();
+}
 
 base::LazyInstance<
     base::SequenceLocalStorageSlot<internal::MessageDispatchContext*>>::Leaky
@@ -205,7 +211,7 @@ Message::Message(uint32_t name,
                  MojoCreateMessageFlags create_message_flags,
                  std::vector<ScopedHandle>* handles) {
   uint32_t trace_nonce =
-      static_cast<uint32_t>(base::trace_event::GetNextGlobalTraceId());
+      static_cast<uint32_t>(GetNextGlobalTraceId());
   TRACE_EVENT(TRACE_DISABLED_BY_DEFAULT("mojom"), "mojo::Message::Message",
               perfetto::Flow::Global(::mojo::GetTraceId(name, trace_nonce)),
               "name", name, "flags", flags, "trace_nonce", trace_nonce);
@@ -233,7 +239,7 @@ Message::Message(ScopedMessageHandle handle,
                  const internal::MessageHeaderV1& header)
     : handle_(std::move(handle)), transferable_(true) {
   const uint32_t trace_nonce =
-      static_cast<uint32_t>(base::trace_event::GetNextGlobalTraceId());
+      static_cast<uint32_t>(GetNextGlobalTraceId());
   TRACE_EVENT(
       "mojom", "mojo::Message::Message_FromHandle",
       perfetto::Flow::Global(::mojo::GetTraceId(header.name, trace_nonce)),

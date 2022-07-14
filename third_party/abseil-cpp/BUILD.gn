@@ -20,6 +20,7 @@ config("absl_component_build") {
 assert(!is_nacl || is_nacl_saigo,
        "base must not be built in most nacl toolchains")
 
+if (is_clang) {
 component("absl") {
   public_deps = [ ":absl_component_deps" ]
   if (is_component_build) {
@@ -54,6 +55,13 @@ component("absl") {
     }
   }
 }
+}
+else {
+  source_set("absl") {
+    public_deps = [ ":absl_component_deps" ]
+  }
+}
+
 
 group("absl_component_deps") {
   public_deps = [

@@ -220,8 +220,8 @@ deps = {
     'dep_type': 'cipd',
     'condition': 'host_os == "win"',
   },
-  'src/third_party/perfetto':
-    Var('android_git') + '/platform/external/perfetto.git' + '@' + 'f7b904a467cb55e4ff3a2ded74354e8e8d8ffabf',
+  # 'src/third_party/perfetto':
+  #   Var('android_git') + '/platform/external/perfetto.git' + '@' + 'f7b904a467cb55e4ff3a2ded74354e8e8d8ffabf',
   'src/third_party/boringssl/src':
     Var('boringssl_git') + '/boringssl.git' + '@' +  Var('boringssl_revision'),
   'src/third_party/ced/src':

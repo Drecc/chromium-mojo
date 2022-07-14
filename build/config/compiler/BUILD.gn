@@ -1658,6 +1658,7 @@ config("chromium_code") {
       # For intentional fallthrough, use FALLTHROUGH; from
       # base/compiler_specific.h
       "-Wimplicit-fallthrough",
+      "-Wno-unused-variable",
     ]
 
     # TODO(thakis): Enable this more often, https://crbug.com/346399

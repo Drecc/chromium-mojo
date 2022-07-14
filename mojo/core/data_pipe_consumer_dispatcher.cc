@@ -15,7 +15,7 @@
 #include "base/logging.h"
 #include "base/memory/ref_counted.h"
 #include "base/numerics/checked_math.h"
-#include "base/trace_event/trace_event.h"
+// #include "base/trace_event/trace_event.h"
 #include "mojo/core/core.h"
 #include "mojo/core/data_pipe_control_message.h"
 #include "mojo/core/node_controller.h"
@@ -582,8 +582,8 @@ void DataPipeConsumerDispatcher::UpdateSignalsStateNoLock() {
           break;
         }
 
-        TRACE_EVENT0("ipc",
-                     "DataPipeConsumerDispatcher received DATA_WAS_WRITTEN");
+        // TRACE_EVENT0("ipc",
+        //              "DataPipeConsumerDispatcher received DATA_WAS_WRITTEN");
 
         uint32_t new_bytes_available;
         if (!base::CheckAdd(bytes_available_, m->num_bytes)

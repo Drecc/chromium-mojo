@@ -12,10 +12,10 @@
 
 #include "base/check.h"
 #include "base/template_util.h"
+#include "base/trace_event/base_tracing_forward.h"
 #include "mojo/public/cpp/bindings/lib/hash_util.h"
 #include "mojo/public/cpp/bindings/type_converter.h"
 #include "third_party/abseil-cpp/absl/utility/utility.h"
-#include "third_party/perfetto/include/perfetto/tracing/traced_value_forward.h"
 
 namespace mojo {
 namespace internal {
