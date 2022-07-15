@@ -25,7 +25,7 @@
 #include "base/mac/scoped_mach_vm.h"
 #include "base/message_loop/message_pump_for_io.h"
 #include "base/task/current_thread.h"
-#include "base/trace_event/typed_macros.h"
+#include "base/trace_event/base_tracing.h"
 
 extern "C" {
 kern_return_t fileport_makeport(int fd, mach_port_t*);
